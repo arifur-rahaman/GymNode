@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+docs/design/
+.next/
+coverage/
+playwright-report/
+test-results/
+packages/db/src/database.types.ts
+supabase/.temp/

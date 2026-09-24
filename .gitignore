@@ -1,0 +1,24 @@
+node_modules/
+.turbo/
+coverage/
+*.tsbuildinfo
+.DS_Store
+
+# env files: never commit secrets. .env.example is the only committed one.
+.env
+.env.*
+!.env.example
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
