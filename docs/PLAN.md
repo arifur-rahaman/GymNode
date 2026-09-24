@@ -1,6 +1,6 @@
 # GymNode — Build Plan (Phase 1: Web)
 
-> Status: **M0 done (24 Sep 2026). Next: M1 (auth & onboarding), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
+> Status: **M1 done (25 Sep 2026). Next: M2 (members & packages), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
 > Sources: `docs/design/CLAUDE_CODE_PROMPT.md` (the brief), `docs/design/DESIGN_SYSTEM.md`, `docs/design/tokens.css`, `docs/design/designs/*.dc.html`.
 > Written 24 Sep 2026.
 
@@ -310,13 +310,23 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 
 ### M1 — Auth & onboarding
 
-- [ ] Core schema migration: profiles, platform_admins, plans, gyms, branches, gym_users, invites, counters, audit_logs, subscriptions + RLS + pgTAP tests
-- [ ] Owner sign-up + login (email + password), staff login (phone + password, created by owner), forced password change on first login
-- [ ] Onboarding wizard: gym name → branch → logo → first packages → invite staff
-- [ ] 14-day trial starts automatically (configurable); past_due after trial, read-only suspension after 7 more days
-- [ ] Staff invite + accept flow with role and branch
-- [ ] Role-based routing: staff → `/app`, platform admin → `/admin`; gym + branch switcher
-- [ ] App shell: sidebar / rail / bottom nav matching designs
+- [x] Core schema migration: profiles, platform_admins, platform_settings, plans, gyms, branches, gym_users, gym_counters, gym_subscriptions, subscription_invoices, support_sessions, audit_logs, packages + RLS on every table + 36 pgTAP tests
+- [x] Owner sign-up + login (email + password, email confirmation), staff login (phone + password, created by owner/manager), forced password change on first login, owner password reset by email
+- [x] Onboarding wizard: gym + first branch → logo (compressed in the browser) → first packages (3 suggested) → add staff
+- [x] 14-day trial starts automatically (`platform_settings.trial_days`); `gym_access_state()` gives past_due after the trial and read-only (suspended) 7 days later, enforced in RLS
+- [x] Staff accounts with role (owner adds manager/reception/trainer, manager adds reception/trainer), turn off/on, password reset by owner/manager
+- [x] Role-based routing: `/` → login / onboarding / `/app` / `/admin`; protected routes in `proxy.ts`; gym switcher when a user works in several gyms
+- [x] App shell matching the designs: 248px sidebar (≥1200), icon rail (768–1199), top bar + bottom nav + menu sheet (<768), trial card, read-only banner
+- [ ] Branch switcher: deferred to when multi-branch data exists (M2+). Branch access (`gym_users.branch_ids`) is already enforced in RLS
+
+**M1 notes (24–25 Sep 2026)**
+
+- **Staff login without SMS:** Supabase refuses phone+password logins unless a paid SMS provider is set up ("Phone logins are disabled"). Staff logins are therefore stored as `8801XXXXXXXXX@staff.gymnode.invalid` (`.invalid` can never receive mail). Staff only ever type their phone number. When an SMS gateway is chosen (M6), phone OTP can be added on top.
+- **Staff invites → owner-created accounts** (decision Q2). There is no invite/accept flow and no `staff_invites` table.
+- **The secret key is used in one more place than planned:** creating and resetting staff logins needs Supabase's Auth admin API. It runs only on the server (`lib/supabase/admin.ts`, marked `server-only`), only after a database check that the caller may manage that role, and every database write still goes through the caller's own session and RLS. A login can only be attached to the gym it was created for (`created_for_gym`), so an owner can't pull a stranger into their gym.
+- **`packages` table moved into M1** because onboarding creates the first packages. The full packages screen is still M2.
+- **Numbers in Bangla text use English digits** ("3টি প্যাকেজ") per DESIGN_SYSTEM §3. Long dates keep Bangla digits, as in the design header.
+- **Local demo logins** are listed at the top of `supabase/seed.sql`.
 
 ### M2 — Members & packages
 

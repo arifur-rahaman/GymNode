@@ -40,6 +40,10 @@ jobs:
       # Only Postgres is needed to apply migrations and run pgTAP tests.
       - run: pnpm exec supabase db start
       - run: pnpm exec supabase test db
+      - name: Generated database types are up to date
+        run: |
+          pnpm db:types
+          git diff --exit-code packages/db/src/database.types.ts
 
   e2e:
     name: End-to-end (Playwright)
@@ -53,6 +57,16 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter web exec playwright install --with-deps chromium
+      # Local Supabase (with seed data) for login/onboarding tests.
+      - run: pnpm exec supabase start -x studio,imgproxy,vector,logflare,edge-runtime,supavisor,postgres-meta
+      - name: Write local env for the web app
+        run: |
+          eval "$(pnpm exec supabase status -o env | grep -E '^(API_URL|PUBLISHABLE_KEY|SECRET_KEY)=')"
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL"
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLISHABLE_KEY"
+            echo "SUPABASE_SECRET_KEY=$SECRET_KEY"
+          } > apps/web/.env.local
       - run: pnpm e2e
       - uses: actions/upload-artifact@v4
         if: failure()
