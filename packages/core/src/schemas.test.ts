@@ -123,3 +123,46 @@ describe("staffSchema", () => {
     ).toBe("invalidRole");
   });
 });
+
+describe("member & payment schemas", () => {
+  it("turns empty optional fields into null", async () => {
+    const { memberSchema } = await import("./schemas");
+    const r = memberSchema.parse({
+      fullName: "রাফি আহমেদ",
+      phone: "01711000001",
+      gender: "",
+      dob: "",
+      address: "",
+      emergencyName: "",
+      emergencyPhone: "",
+      trainerId: "",
+      notes: "",
+    });
+    expect(r).toMatchObject({
+      phone: "+8801711000001",
+      gender: null,
+      dob: null,
+      emergencyPhone: null,
+      trainerId: null,
+    });
+  });
+  it("needs a transaction ID for bKash but not for cash", async () => {
+    const { paymentSchema } = await import("./schemas");
+    const base = { packageId: "p", amountTaka: "1500", discountTaka: "0", transactionId: "" };
+    expect(paymentSchema.safeParse({ ...base, method: "cash" }).success).toBe(true);
+    const bad = paymentSchema.safeParse({ ...base, method: "bkash" });
+    expect(bad.success ? null : bad.error.issues[0]?.message).toBe("transactionRequired");
+    expect(
+      paymentSchema.safeParse({ ...base, method: "bkash", transactionId: "8N7A6B5C" }).success,
+    ).toBe(true);
+    // Nothing paid now → no transaction needed.
+    expect(paymentSchema.safeParse({ ...base, amountTaka: "0", method: "bkash" }).success).toBe(
+      true,
+    );
+  });
+  it("rejects a freeze that ends before it starts", async () => {
+    const { freezeSchema } = await import("./schemas");
+    const r = freezeSchema.safeParse({ from: "2026-09-25", until: "2026-09-20", reason: "" });
+    expect(r.success ? null : r.error.issues[0]?.message).toBe("untilBeforeFrom");
+  });
+});

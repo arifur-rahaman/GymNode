@@ -1,5 +1,7 @@
 import { z } from "zod";
+import { isIsoDate } from "./dates";
 import { isValidBdPhone, normalizeBdPhone } from "./phone";
+import { PAYMENT_METHODS, needsTransactionId } from "./renewal";
 
 /**
  * Form rules shared by the browser (instant feedback) and the server (the real check).
@@ -18,6 +20,10 @@ export const ERR = {
   invalidPrefix: "invalidPrefix",
   invalidNumber: "invalidNumber",
   invalidRole: "invalidRole",
+  invalidDate: "invalidDate",
+  transactionRequired: "transactionRequired",
+  untilBeforeFrom: "untilBeforeFrom",
+  choosePackage: "choosePackage",
 } as const;
 export type ErrorCode = (typeof ERR)[keyof typeof ERR];
 
@@ -114,3 +120,70 @@ export const staffSchema = z.object({
 export type StaffInput = z.input<typeof staffSchema>;
 
 export const staffPasswordResetSchema = z.object({ password });
+
+// ---------------------------------------------------------------------------
+// Members (M2)
+// ---------------------------------------------------------------------------
+const optionalDate = z
+  .string()
+  .trim()
+  .refine((v) => v === "" || isIsoDate(v), ERR.invalidDate)
+  .transform((v) => (v === "" ? null : v));
+
+const requiredDate = z.string().trim().refine(isIsoDate, ERR.invalidDate);
+
+export const GENDERS = ["male", "female", "other"] as const;
+
+const optionalGender = z.enum([...GENDERS, ""]).transform((v) => (v === "" ? null : v));
+
+const optionalId = z
+  .string()
+  .trim()
+  .transform((v) => (v === "" ? null : v));
+
+export const memberSchema = z.object({
+  fullName: text(2, 80),
+  phone: bdPhone,
+  gender: optionalGender,
+  dob: optionalDate,
+  address: optionalText(200),
+  emergencyName: optionalText(80),
+  emergencyPhone: optionalBdPhone,
+  trainerId: optionalId,
+  notes: optionalText(1000),
+});
+export type MemberInput = z.input<typeof memberSchema>;
+
+/** Package + payment part of the new-member form and the renew panel. */
+export const paymentSchema = z
+  .object({
+    packageId: z.string().trim().min(1, ERR.choosePackage),
+    amountTaka: takaAmount,
+    discountTaka: takaAmount,
+    method: z.enum(PAYMENT_METHODS),
+    transactionId: z.string().trim().max(40, ERR.tooLong),
+  })
+  .refine(
+    (v) => v.amountTaka === 0 || !needsTransactionId(v.method) || v.transactionId.length >= 4,
+    { message: ERR.transactionRequired, path: ["transactionId"] },
+  );
+export type PaymentInput = z.input<typeof paymentSchema>;
+
+export const freezeSchema = z
+  .object({ from: requiredDate, until: requiredDate, reason: optionalText(300) })
+  .refine((v) => v.until >= v.from, { message: ERR.untilBeforeFrom, path: ["until"] });
+export type FreezeInput = z.input<typeof freezeSchema>;
+
+export const selfRegistrationSchema = z.object({
+  fullName: text(2, 80),
+  phone: bdPhone,
+  gender: optionalGender,
+  dob: optionalDate,
+  address: optionalText(200),
+  emergencyName: optionalText(80),
+  emergencyPhone: optionalBdPhone,
+});
+export type SelfRegistrationInput = z.input<typeof selfRegistrationSchema>;
+
+export const packageFormSchema = packageSchema.extend({ isActive: z.boolean() });
+export type PackageFormInput = z.input<typeof packageFormSchema>;
