@@ -187,3 +187,18 @@ export type SelfRegistrationInput = z.input<typeof selfRegistrationSchema>;
 
 export const packageFormSchema = packageSchema.extend({ isActive: z.boolean() });
 export type PackageFormInput = z.input<typeof packageFormSchema>;
+
+/** Paying an outstanding due without renewing (M3). */
+export const dueSchema = z
+  .object({
+    amountTaka: takaAmount.refine((v) => v > 0, ERR.invalidNumber),
+    method: z.enum(PAYMENT_METHODS),
+    transactionId: z.string().trim().max(40, ERR.tooLong),
+  })
+  .refine((v) => !needsTransactionId(v.method) || v.transactionId.length >= 4, {
+    message: ERR.transactionRequired,
+    path: ["transactionId"],
+  });
+export type DueInput = z.input<typeof dueSchema>;
+
+export const cancelPaymentSchema = z.object({ reason: text(3, 300) });

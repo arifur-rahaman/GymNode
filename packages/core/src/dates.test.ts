@@ -54,3 +54,33 @@ describe("formatDateShort with instants", () => {
     expect(formatDateShort(new Date("2026-09-23T20:30:00Z"))).toBe("24 Sep 2026");
   });
 });
+
+describe("dhakaPeriod", async () => {
+  const { dhakaPeriod, percentChange, dhakaDayStart } = await import("./dates");
+  // Friday 25 Sep 2026, 01:00 in Dhaka (= 24 Sep 19:00 UTC).
+  const now = new Date("2026-09-24T19:00:00Z");
+
+  it("today runs from Dhaka midnight to the next", () => {
+    const r = dhakaPeriod("today", now);
+    expect(r.firstDay).toBe("2026-09-25");
+    expect(r.from.toISOString()).toBe("2026-09-24T18:00:00.000Z");
+    expect(r.to.toISOString()).toBe("2026-09-25T18:00:00.000Z");
+    expect(r.prevFrom.toISOString()).toBe("2026-09-23T18:00:00.000Z");
+  });
+  it("the week starts on Saturday", () => {
+    expect(dhakaPeriod("week", now).firstDay).toBe("2026-09-19");
+    // A Saturday is the first day of its own week.
+    expect(dhakaPeriod("week", new Date("2026-09-26T06:00:00Z")).firstDay).toBe("2026-09-26");
+  });
+  it("the month is the calendar month, across year ends too", () => {
+    expect(dhakaPeriod("month", now).firstDay).toBe("2026-09-01");
+    const dec = dhakaPeriod("month", new Date("2026-12-15T06:00:00Z"));
+    expect(dec.to.toISOString()).toBe(dhakaDayStart("2027-01-01").toISOString());
+    const jan = dhakaPeriod("month", new Date("2027-01-15T06:00:00Z"));
+    expect(jan.prevFrom.toISOString()).toBe(dhakaDayStart("2026-12-01").toISOString());
+  });
+  it("percent change", () => {
+    expect(percentChange(112, 100)).toBe(12);
+    expect(percentChange(50, 0)).toBeNull();
+  });
+});

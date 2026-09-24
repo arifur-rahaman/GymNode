@@ -166,3 +166,17 @@ describe("member & payment schemas", () => {
     expect(r.success ? null : r.error.issues[0]?.message).toBe("untilBeforeFrom");
   });
 });
+
+describe("dueSchema", () => {
+  it("needs a positive amount and a transaction ID for mobile banking", async () => {
+    const { dueSchema } = await import("./schemas");
+    expect(
+      dueSchema.safeParse({ amountTaka: "0", method: "cash", transactionId: "" }).success,
+    ).toBe(false);
+    expect(
+      dueSchema.safeParse({ amountTaka: "500", method: "cash", transactionId: "" }).success,
+    ).toBe(true);
+    const r = dueSchema.safeParse({ amountTaka: "500", method: "nagad", transactionId: "" });
+    expect(r.success ? null : r.error.issues[0]?.message).toBe("transactionRequired");
+  });
+});

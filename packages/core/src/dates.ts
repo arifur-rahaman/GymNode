@@ -93,3 +93,68 @@ export function formatTimeDhaka(value: Date): string {
     hour12: false,
   }).format(value);
 }
+
+/** Midnight at the start of a Dhaka calendar day, as a real instant (Dhaka is UTC+6, no DST). */
+export function dhakaDayStart(date: IsoDate): Date {
+  if (!isIsoDate(date)) throw new RangeError(`Invalid date: ${date}`);
+  return new Date(`${date}T00:00:00+06:00`);
+}
+
+export type Period = "today" | "week" | "month";
+
+export interface PeriodRange {
+  from: Date;
+  to: Date;
+  /** The same-length period just before, for "+12% vs yesterday" comparisons. */
+  prevFrom: Date;
+  prevTo: Date;
+  firstDay: IsoDate;
+}
+
+/**
+ * Today / this week (Saturday–Friday, as in Bangladesh) / this month, in Dhaka time.
+ * `to` is exclusive and is the end of the current period, not "now".
+ */
+export function dhakaPeriod(period: Period, now: Date = new Date()): PeriodRange {
+  const today = todayInDhaka(now);
+  if (period === "today") {
+    const firstDay = today;
+    return {
+      from: dhakaDayStart(firstDay),
+      to: dhakaDayStart(addDays(firstDay, 1)),
+      prevFrom: dhakaDayStart(addDays(firstDay, -1)),
+      prevTo: dhakaDayStart(firstDay),
+      firstDay,
+    };
+  }
+  if (period === "week") {
+    // getUTCDay of the calendar date: 0 = Sunday … 6 = Saturday.
+    const weekday = new Date(`${today}T00:00:00Z`).getUTCDay();
+    const sinceSaturday = (weekday + 1) % 7;
+    const firstDay = addDays(today, -sinceSaturday);
+    return {
+      from: dhakaDayStart(firstDay),
+      to: dhakaDayStart(addDays(firstDay, 7)),
+      prevFrom: dhakaDayStart(addDays(firstDay, -7)),
+      prevTo: dhakaDayStart(firstDay),
+      firstDay,
+    };
+  }
+  const [y, m] = today.split("-").map(Number) as [number, number];
+  const firstDay = `${y}-${String(m).padStart(2, "0")}-01`;
+  const next = m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, "0")}-01`;
+  const prev = m === 1 ? `${y - 1}-12-01` : `${y}-${String(m - 1).padStart(2, "0")}-01`;
+  return {
+    from: dhakaDayStart(firstDay),
+    to: dhakaDayStart(next),
+    prevFrom: dhakaDayStart(prev),
+    prevTo: dhakaDayStart(firstDay),
+    firstDay,
+  };
+}
+
+/** Percentage change, rounded; null when there is nothing to compare with. */
+export function percentChange(current: number, previous: number): number | null {
+  if (previous === 0) return null;
+  return Math.round(((current - previous) / previous) * 100);
+}
