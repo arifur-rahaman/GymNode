@@ -1,0 +1,106 @@
+@import "tailwindcss";
+@import "../styles/tokens.css";
+
+/* next/font gives each font a generated family name, exposed as these variables
+   (set on <html> in layout.tsx). They replace the plain names in tokens.css. */
+:root {
+  --font-sans: var(--font-hind), var(--font-space), system-ui, sans-serif;
+  --font-num: var(--font-space), var(--font-hind), system-ui, sans-serif;
+}
+
+/* Map design tokens to Tailwind utilities: bg-surface, text-muted, border-border, etc.
+   Components must use these, never raw hex (DESIGN_SYSTEM §2). */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-chart-muted: var(--chart-muted);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-secondary: var(--secondary);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  --color-badge-green-bg: var(--badge-green-bg);
+  --color-badge-green-fg: var(--badge-green-fg);
+  --color-badge-amber-bg: var(--badge-amber-bg);
+  --color-badge-amber-fg: var(--badge-amber-fg);
+  --color-badge-red-bg: var(--badge-red-bg);
+  --color-badge-red-fg: var(--badge-red-fg);
+  --color-badge-blue-bg: var(--badge-blue-bg);
+  --color-badge-blue-fg: var(--badge-blue-fg);
+  --color-badge-gray-bg: var(--badge-gray-bg);
+  --color-badge-gray-fg: var(--badge-gray-fg);
+
+  /* shadcn/ui names, pointed at our tokens so generated components match the design. */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--on-accent);
+  --color-muted-foreground: var(--text-muted);
+  --color-destructive: var(--danger);
+  --color-input: var(--border);
+  --color-ring: var(--accent);
+
+  /* Fonts (--font-sans) and radii (--radius-xs … --radius-xl) need no mapping: tokens.css
+     defines them unlayered on :root, which overrides Tailwind's defaults of the same name,
+     so font-sans and rounded-md/lg/xl already follow the design system. */
+
+  --ease-volt: var(--ease);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  /* Visible keyboard focus everywhere (DESIGN_SYSTEM accessibility rules). */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Numbers: Space Grotesk with tabular figures so amounts line up. */
+@utility num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}

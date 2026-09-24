@@ -1,0 +1,101 @@
+/* Iron & Volt design tokens — copied from docs/design/tokens.css (the source of truth).
+   Keep the two in sync. Differences from the source, on purpose:
+   - Dark is ALWAYS the default until the user picks light (brief §3, PLAN.md §7.1),
+     so the prefers-color-scheme block is removed.
+   - [data-theme="dark"] is also a selector, so a dark panel can sit inside a light page
+     (used by /dev/ui to show both themes side by side).
+   - body / .num / reduced-motion rules live in app/globals.css. */
+
+:root,
+[data-theme="dark"] {
+  /* surfaces */
+  --bg: #0e0f12;
+  --surface: #1a1c21;
+  --surface-2: #23262d;
+  --border: #2a2d34;
+  --chart-muted: #3a3e47;
+
+  /* text */
+  --text: #f4f4f5;
+  --text-muted: #a1a7b0;
+
+  /* brand */
+  --accent: #c6ff3d;
+  --accent-text: #c6ff3d;
+  --on-accent: #0e0f12;
+  --secondary: #ff6b2c;
+
+  /* status */
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --info: #38bdf8;
+
+  --badge-green-bg: rgba(74, 222, 128, 0.14);
+  --badge-green-fg: #4ade80;
+  --badge-amber-bg: rgba(251, 191, 36, 0.14);
+  --badge-amber-fg: #fbbf24;
+  --badge-red-bg: rgba(248, 113, 113, 0.14);
+  --badge-red-fg: #f87171;
+  --badge-blue-bg: rgba(56, 189, 248, 0.14);
+  --badge-blue-fg: #7dd3fc;
+  --badge-gray-bg: rgba(161, 167, 176, 0.16);
+  --badge-gray-fg: #c3c8cf;
+
+  /* typography */
+  --font-sans: "Hind Siliguri", "Space Grotesk", system-ui, sans-serif;
+  --font-num: "Space Grotesk", "Hind Siliguri", system-ui, sans-serif;
+
+  /* radius */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 18px;
+  --radius-pill: 999px;
+
+  /* layout */
+  --sidebar-w: 248px;
+  --rail-w: 76px;
+  --tap: 44px;
+
+  /* motion */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur: 200ms;
+
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #f4f5f1;
+  --surface: #ffffff;
+  --surface-2: #eef0ea;
+  --border: #e2e4de;
+  --chart-muted: #d4d8cf;
+
+  --text: #111214;
+  --text-muted: #555b64;
+
+  --accent: #c6ff3d;
+  --accent-text: #3f6212;
+  --on-accent: #0e0f12;
+  --secondary: #ff6b2c;
+
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #b91c1c;
+  --info: #075985;
+
+  --badge-green-bg: #dcfce7;
+  --badge-green-fg: #166534;
+  --badge-amber-bg: #fef3c7;
+  --badge-amber-fg: #92400e;
+  --badge-red-bg: #fee2e2;
+  --badge-red-fg: #991b1b;
+  --badge-blue-bg: #e0f2fe;
+  --badge-blue-fg: #075985;
+  --badge-gray-bg: #e5e7eb;
+  --badge-gray-fg: #374151;
+
+  color-scheme: light;
+}
