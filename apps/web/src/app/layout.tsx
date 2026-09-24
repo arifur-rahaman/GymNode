@@ -22,11 +22,15 @@ const space = Space_Grotesk({
   display: "swap",
 });
 
+// Demo deployments (NEXT_PUBLIC_DEMO_MODE=true) show a banner and ask search engines not to index them.
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("app");
   return {
     title: { default: t("name"), template: `%s · ${t("name")}` },
     description: t("tagline"),
+    ...(DEMO_MODE ? { robots: { index: false, follow: false } } : {}),
   };
 }
 
@@ -38,6 +42,7 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();
+  const t = await getTranslations("app");
   // Theme is read on the server so the first paint is already correct (no flash).
   const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
 
@@ -49,6 +54,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${hind.variable} ${space.variable} h-full antialiased`}
     >
       <body className="min-h-full">
+        {DEMO_MODE ? (
+          <div
+            role="note"
+            className="bg-badge-blue-bg px-4 py-2 text-center text-[13px] font-medium text-badge-blue-fg"
+          >
+            {t("demoBanner")}
+          </div>
+        ) : null}
         <NextIntlClientProvider>
           {children}
           <Toaster />

@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "GymNode",
-    "tagline": "Simple gym management software for Bangladesh"
+    "tagline": "Simple gym management software for Bangladesh",
+    "demoBanner": "Demo version — for trying things out. Don't enter real member or money data; data may be deleted."
   },
   "home": {
     "devUi": "Open the component gallery"

@@ -36,8 +36,9 @@ cp .env.example apps/web/.env.local
 pnpm dev          # http://localhost:3000  (component gallery: /dev/ui)
 ```
 
-The web app also runs without Supabase configured. Pages that need the database will
-arrive from M1 onward.
+Login and every page behind it need the local database (`pnpm db:start`) and
+`apps/web/.env.local`. Demo logins for your computer are listed at the top of `supabase/seed.sql`.
+Deploying online: see [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## Everyday commands
 
