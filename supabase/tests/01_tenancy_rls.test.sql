@@ -108,7 +108,7 @@ insert into ids values
 
 select pg_temp.login((select v from ids where k = 'owner_a'));
 select lives_ok(
-  $$select public.add_gym_user((select v from ids where k = 'gym_a'), (select v from ids where k = 'manager'), 'manager', 'রুবেল', '+8801733333333')$$,
+  $$select public.add_gym_user((select v from ids where k = 'gym_a'), (select v from ids where k = 'manager'), 'manager', 'রুবেল', '+8801799000003')$$,
   'owner can add a manager');
 select throws_ok(
   $$select public.add_gym_user((select v from ids where k = 'gym_a'), (select v from ids where k = 'stranger'), 'reception', 'x', null)$$,
@@ -123,7 +123,7 @@ select lives_ok(
   $$select public.add_gym_user((select v from ids where k = 'gym_a'), (select v from ids where k = 'reception'), 'reception', 'শিপা', '+8801799000002')$$,
   'manager can add reception');
 select lives_ok(
-  $$select public.add_gym_user((select v from ids where k = 'gym_a'), (select v from ids where k = 'trainer'), 'trainer', 'কামাল', '+8801744444444')$$,
+  $$select public.add_gym_user((select v from ids where k = 'gym_a'), (select v from ids where k = 'trainer'), 'trainer', 'কামাল', '+8801799000004')$$,
   'manager can add a trainer');
 select pg_temp.logout();
 
