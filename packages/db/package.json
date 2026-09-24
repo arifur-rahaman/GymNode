@@ -1,0 +1,17 @@
+{
+  "name": "@gymnode/db",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generated Supabase database types. Regenerate with `pnpm db:types` after every migration.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@gymnode/config": "workspace:*",
+    "typescript": "~6.0.3"
+  }
+}
