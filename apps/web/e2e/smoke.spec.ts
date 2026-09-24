@@ -1,15 +1,16 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("M0 smoke", () => {
-  test("home defaults to Bangla and dark theme", async ({ page }) => {
+  test("defaults to Bangla and dark theme", async ({ page }) => {
     await page.goto("/");
+    await expect(page).toHaveURL(/\/login$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "bn");
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("GymNode তৈরি হচ্ছে");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("লগইন করুন");
   });
 
   test("theme choice is remembered after reload", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/login");
     await page.getByTestId("theme-toggle").click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
     await expect
@@ -20,12 +21,12 @@ test.describe("M0 smoke", () => {
   });
 
   test("language switch to English is remembered", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/login");
     await page.getByRole("button", { name: "English" }).click();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("GymNode is being built");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Log in");
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await page.reload();
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("GymNode is being built");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Log in");
   });
 
   test("component gallery shows both themes and opens the payment sheet", async ({ page }) => {

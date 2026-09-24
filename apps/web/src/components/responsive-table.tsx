@@ -16,6 +16,8 @@ export type Column<Row> = {
   primary?: boolean;
   /** Hide on phones (e.g. checkbox, low-value columns). */
   hideOnMobile?: boolean;
+  /** On phones, show this cell full-width at the bottom of the card without a label (e.g. action buttons). */
+  mobileFooter?: boolean;
 };
 
 type ResponsiveTableProps<Row> = {
@@ -35,7 +37,8 @@ function ResponsiveTable<Row>({
 }: ResponsiveTableProps<Row>) {
   const template = columns.map((c) => c.width ?? "1fr").join(" ");
   const primary = columns.find((c) => c.primary);
-  const secondary = columns.filter((c) => !c.primary && !c.hideOnMobile);
+  const secondary = columns.filter((c) => !c.primary && !c.hideOnMobile && !c.mobileFooter);
+  const footer = columns.filter((c) => c.mobileFooter);
 
   return (
     <div className={cn("overflow-hidden rounded-lg border border-border bg-surface", className)}>
@@ -93,6 +96,11 @@ function ResponsiveTable<Row>({
                 </div>
               ))}
             </dl>
+            {footer.map((c) => (
+              <div key={c.key} className="empty:hidden">
+                {c.cell(row)}
+              </div>
+            ))}
           </li>
         ))}
       </ul>

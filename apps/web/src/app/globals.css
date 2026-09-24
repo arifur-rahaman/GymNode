@@ -57,6 +57,9 @@
      so font-sans and rounded-md/lg/xl already follow the design system. */
 
   --ease-volt: var(--ease);
+
+  /* Desktop sidebar breakpoint from DESIGN_SYSTEM §5 (≥1200px). Use as `desk:`. */
+  --breakpoint-desk: 75rem;
 }
 
 @layer base {

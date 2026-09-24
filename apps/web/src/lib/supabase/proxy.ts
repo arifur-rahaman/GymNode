@@ -2,10 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getPublicSupabaseEnv } from "@/lib/env";
 
+const PROTECTED = ["/app", "/admin", "/onboarding", "/account"];
+const AUTH_PAGES = ["/login", "/signup", "/forgot-password"];
+
+function startsWithAny(path: string, prefixes: string[]) {
+  return prefixes.some((p) => path === p || path.startsWith(`${p}/`));
+}
+
 /**
- * Refreshes the Supabase session cookie on each request (Server Components cannot
- * write cookies themselves). Pattern from Supabase's Next.js SSR guide.
- * Route protection (/app, /admin) is added in M1.
+ * Runs before every page: refreshes the Supabase session cookie (Server Components
+ * cannot write cookies) and does the coarse login check. Fine-grained permission
+ * checks happen in layouts and, above all, in the database (RLS).
  */
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -29,7 +36,22 @@ export async function updateSession(request: NextRequest) {
 
   // Do not put code between createServerClient and getClaims(): it can cause
   // hard-to-debug random logouts. getClaims() validates the JWT and refreshes it if needed.
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  const loggedIn = !!data?.claims?.sub;
+  const path = request.nextUrl.pathname;
+
+  const redirectTo = (target: string, withNext = false) => {
+    const url = request.nextUrl.clone();
+    url.pathname = target;
+    url.search = withNext ? `?next=${encodeURIComponent(path + request.nextUrl.search)}` : "";
+    const res = NextResponse.redirect(url);
+    // Keep any refreshed session cookies.
+    response.cookies.getAll().forEach((c) => res.cookies.set(c));
+    return res;
+  };
+
+  if (!loggedIn && startsWithAny(path, PROTECTED)) return redirectTo("/login", true);
+  if (loggedIn && startsWithAny(path, AUTH_PAGES)) return redirectTo("/");
 
   return response;
 }

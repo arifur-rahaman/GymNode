@@ -1,0 +1,62 @@
+import {
+  BarChart3,
+  Box,
+  Dumbbell,
+  Globe,
+  Home,
+  LayoutGrid,
+  Lock,
+  MessageCircle,
+  Settings,
+  ShoppingBag,
+  Users,
+  Wallet,
+  WalletCards,
+  type LucideIcon,
+} from "lucide-react";
+import type { Database } from "@gymnode/db";
+
+type GymRole = Database["public"]["Enums"]["gym_role"];
+
+export type NavItem = {
+  key: string;
+  /** null = not built yet; shown with a "coming soon" tag (PLAN.md Q9). */
+  href: string | null;
+  icon: LucideIcon;
+  roles: GymRole[];
+  milestone?: string;
+};
+
+const ALL: GymRole[] = ["owner", "manager", "reception", "trainer"];
+const DESK: GymRole[] = ["owner", "manager", "reception"];
+const MGMT: GymRole[] = ["owner", "manager"];
+
+// Order and labels from Sidebar.dc.html.
+export const NAV_ITEMS: NavItem[] = [
+  { key: "dashboard", href: "/app", icon: LayoutGrid, roles: ALL },
+  { key: "members", href: null, icon: Users, roles: ALL, milestone: "M2" },
+  { key: "payments", href: null, icon: WalletCards, roles: DESK, milestone: "M3" },
+  { key: "packages", href: null, icon: Box, roles: DESK, milestone: "M2" },
+  { key: "access", href: null, icon: Lock, roles: DESK, milestone: "M8" },
+  { key: "staff", href: "/app/staff", icon: Dumbbell, roles: MGMT },
+  { key: "sales", href: null, icon: ShoppingBag, roles: DESK, milestone: "M5" },
+  { key: "accounts", href: null, icon: Wallet, roles: MGMT, milestone: "M5" },
+  { key: "reports", href: null, icon: BarChart3, roles: MGMT, milestone: "M5" },
+  { key: "messages", href: null, icon: MessageCircle, roles: MGMT, milestone: "M6" },
+  { key: "website", href: null, icon: Globe, roles: ["owner"], milestone: "later" },
+  { key: "settings", href: null, icon: Settings, roles: MGMT, milestone: "M7" },
+];
+
+// Mobile bottom bar (Dashboard-Mobile.dc.html): 4 destinations + "more".
+export const BOTTOM_KEYS = ["dashboard", "members", "payments", "access"] as const;
+export const HOME_ICON = Home;
+
+export function navFor(role: GymRole) {
+  return NAV_ITEMS.filter((item) => item.roles.includes(role));
+}
+
+export function isActive(pathname: string, href: string) {
+  return href === "/app"
+    ? pathname === "/app"
+    : pathname === href || pathname.startsWith(`${href}/`);
+}
