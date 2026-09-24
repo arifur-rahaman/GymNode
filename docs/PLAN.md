@@ -1,6 +1,6 @@
 # GymNode — Build Plan (Phase 1: Web)
 
-> Status: **M1 done (25 Sep 2026). Next: M2 (members & packages), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
+> Status: **M2 done (25 Sep 2026). Next: M3 (payments & dues), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
 > Sources: `docs/design/CLAUDE_CODE_PROMPT.md` (the brief), `docs/design/DESIGN_SYSTEM.md`, `docs/design/tokens.css`, `docs/design/designs/*.dc.html`.
 > Written 24 Sep 2026.
 
@@ -330,23 +330,33 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 
 ### M2 — Members & packages
 
-- [ ] Schema: members, packages, memberships, freezes, lockers, biometric_enrollments, views + RLS tests
-- [ ] Packages CRUD (price changes audited)
-- [ ] Members list like `Members.dc.html`: tabs with counts, search, package filter, server pagination, Excel export
-- [ ] Add/edit member form, client-side photo compression, private storage
-- [ ] QR self-registration (`/join/[slug]`) → pending → approve
-- [ ] Member profile like `MemberProfile.dc.html` (package progress, info, attendance heatmap, weight chart, payment history, actions)
-- [ ] Freeze / unfreeze
-- [ ] Seed: 2 gyms, ~60 members with Bangla names
+- [x] Schema: members, memberships, membership_freezes, lockers, biometric_enrollments, **payments** (moved from M3), `member_overview` view (security invoker) + 46 new pgTAP tests
+- [x] Packages page: add / edit / turn off / delete (owner & manager; reception read-only). Price changes audited
+- [x] Members list like `Members.dc.html`: tabs with counts (all/active/due/expired/frozen + awaiting approval), search by name/phone/ID, package filter, 25 per page, soonest expiry first, Excel export (CSV)
+- [x] Add/edit member form with photo (shrunk in the browser, private storage, signed links); new member + package + first payment in one transaction
+- [x] QR self-registration (`/join/[slug]`, printable QR) → awaiting approval → approve (gets member code) or reject
+- [x] Member profile like `MemberProfile.dc.html`: status, due, package progress, info, membership and payment history, take payment & renew, WhatsApp, freeze/unfreeze, edit, delete (owner/manager)
+- [x] Freeze / unfreeze (frozen days extend the end date; early unfreeze gives unused days back)
+- [x] Seed: 2 gyms, 60 members with Bangla names, 6 months of memberships and payments, a trainer, lockers, QR sign-ups
+- [ ] Attendance heatmap and weight chart: empty states until door devices (M8) and body tracking exist
+
+**M2 notes (25 Sep 2026)**
+
+- **Payments table + "renew and take payment" moved into M2**, because joining and paying happen together at reception. M3 builds the Payments page, verification, cancelling, receipts and the dues list.
+- **Renewal dates (Q8, my default):** renewing while still active continues from the day after the current end date; renewing after expiry starts today. Admission fee is charged only on the first membership (staff can still add a discount). This can become a gym setting later if you want.
+- **Excel export is a CSV file.** Excel opens it directly, with Bangla working. Real `.xlsx` can come with the reports in M5 if needed.
+- **Lockers:** the table exists and the profile shows the locker; assigning lockers from the screen comes with settings.
+- **Trainers** see only their assigned members, with masked phone numbers, and never see payments.
+- **Bug found by the tests and fixed:** clearing the search box and quickly clicking a tab could undo the tab choice.
 
 ### M3 — Payments & dues
 
-- [ ] Schema: payments, dues view, functions (`record_payment_and_renew`, `verify_payment`, `cancel_payment`) + RLS tests (reception cannot cancel verified payment)
-- [ ] Payments page like `Payments.dc.html` with take-payment panel (sheet on mobile)
-- [ ] Pending verification queue for owner/manager
-- [ ] Per-gym invoice numbers, printable receipt page `/r/[token]`
-- [ ] Dues list
-- [ ] Seed: 6 months of payments
+- [x] Schema: payments + `record_payment_and_renew` (done in M2)
+- [ ] `verify_payment`, `cancel_payment` (cancelling a payment also cancels the membership it created) + RLS tests (reception cannot cancel a verified payment)
+- [ ] Payments page like `Payments.dc.html`: today/week/month KPIs, transactions table, take-payment panel (sheet on mobile)
+- [ ] Pending verification queue for owner/manager, 24-hour reminder for unverified payments
+- [ ] Printable/shareable receipt page `/r/[token]` (invoice numbers already exist)
+- [ ] Dues list + "pay due only" (no renewal)
 
 ### M4 — Dashboard
 
