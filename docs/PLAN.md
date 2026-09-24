@@ -1,6 +1,6 @@
 # GymNode — Build Plan (Phase 1: Web)
 
-> Status: **DRAFT, waiting for founder approval.** No app code is written until you approve this.
+> Status: **DRAFT. Q1–Q5 are decided (see §8). Waiting for the founder to say "start M0".** No app code is written until then.
 > Sources: `docs/design/CLAUDE_CODE_PROMPT.md` (the brief), `docs/design/DESIGN_SYSTEM.md`, `docs/design/tokens.css`, `docs/design/designs/*.dc.html`.
 > Written 24 Sep 2026.
 
@@ -202,7 +202,7 @@ The designs show one status per member: সক্রিয় / বকেয়�
 3. **বকেয়া (due)**: membership valid but `due_paisa > 0`
 4. **সক্রিয় (active)**
 
-The due amount is always shown in its own column, so nothing is hidden. *(See Q4 on whether "pending verification" counts as paid.)*
+The due amount is always shown in its own column, so nothing is hidden. Payments in `pending_verification` **count as paid** here, and the member gets an extra "যাচাই বাকি" flag (decided in Q4).
 
 ### 4.6 Security model (RLS)
 
@@ -297,9 +297,9 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 
 ### M1 — Auth & onboarding
 - [ ] Core schema migration: profiles, platform_admins, plans, gyms, branches, gym_users, invites, counters, audit_logs, subscriptions + RLS + pgTAP tests
-- [ ] Login / sign-up (method per Q1)
+- [ ] Owner sign-up + login (email + password), staff login (phone + password, created by owner), forced password change on first login
 - [ ] Onboarding wizard: gym name → branch → logo → first packages → invite staff
-- [ ] Trial starts automatically (length from a platform setting)
+- [ ] 14-day trial starts automatically (configurable); past_due after trial, read-only suspension after 7 more days
 - [ ] Staff invite + accept flow with role and branch
 - [ ] Role-based routing: staff → `/app`, platform admin → `/admin`; gym + branch switcher
 - [ ] App shell: sidebar / rail / bottom nav matching designs
@@ -370,14 +370,25 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 
 ## 8. Open questions for you
 
-**Needed before M1**
-- **Q1. Login method for gym staff.** Options:
-  (a) **Email + password (or magic link)** first. Free, works today. Phone OTP added in M6 once an SMS provider is chosen. *← my recommendation*
-  (b) Phone OTP from day one. Needs an SMS provider now. Supabase's built-in SMS providers are international ones (Twilio etc.). A Bangladeshi gateway would need Supabase's custom "Send SMS hook". I believe that hook exists, but I need to verify it in the current docs.
-- **Q2. Reception staff without email.** Many front-desk staff may not have email. Is it OK if the owner creates their account with **phone number + password** set by the owner (no OTP needed)?
-- **Q3. Trial length** default: 14 days? (The design shows "১২ দিন বাকি", which suggests 14 or more.) Does a trial need a card or payment? (I assume **no**.)
-- **Q4. Pending bKash/Nagad payments.** Until verified, should the member count as **paid** (can enter the gym, no due shown) or still **due**? I suggest: counts as paid for access and status, and shows a "যাচাই বাকি" flag.
-- **Q5. Product name.** Designs show `[প্রোডাক্টের নাম]`. Should I use "GymNode" for now (the repo name)?
+**Decided (24 Sep 2026). The founder asked me to decide Q1–Q4. Q5 was answered by the founder.**
+- **Q1. Login → owner: email + password. Staff: phone + password. Phone OTP later.**
+  - Owners sign up with email + password. Email verification is free and needs no SMS provider.
+  - Phone OTP gets added in M6, once an SMS gateway is chosen. It then becomes a second way to log in, not a replacement.
+  - Why: an SMS provider costs money and needs a decision, and it shouldn't block M1. Bangladeshi users are generally more used to phone numbers than email, which is why staff log in by phone (Q2), and why OTP comes as soon as there's a gateway.
+  - *To verify at M1:* that Supabase lets an admin create a phone + password user without sending an SMS (`phone_confirm: true` in the admin API), and that `signInWithPassword({ phone, password })` works without an SMS provider configured. If it doesn't, the fallback is an internal placeholder email per staff member (e.g. `8801XXXXXXXXX@staff.gymnode.local`). Staff still type only their phone number.
+- **Q2. Staff without email → yes, the owner creates them.** The owner/manager adds a staff member with name, phone, role and branch, and sets a temporary password. The staff member must change it at first login. The owner can reset it. No email needed.
+- **Q3. Trial → 14 days, no card or payment needed.** The length is a platform setting you can change in `/admin`. When the trial ends:
+  - **Days 1–7 after:** the gym goes to `past_due`. Everything still works, with a renewal banner.
+  - **After 7 days:** the gym goes to `suspended`, which is **read-only**. Data is kept, and staff can still view members and export.
+  - **Access doors keep following member rules either way.** A gym's unpaid SaaS bill should never lock out its members.
+- **Q4. Unverified bKash/Nagad/Rocket payment → counts as paid, with a flag.**
+  - The member is treated as paid for status and door access, and shows a "যাচাই বাকি" badge. The front desk shouldn't block a member because the owner hasn't opened the bKash app yet.
+  - Safeguards:
+    - A transaction ID is required and must be unique per gym + method.
+    - Pending payments appear as a count on the dashboard and in a verification queue for owner/manager.
+    - The owner gets a reminder if something is still unverified after 24 hours.
+    - If a payment is **cancelled** (e.g. the transaction ID was fake), the membership it created is cancelled too, and the member goes back to expired/due. The whole thing is audited.
+- **Q5. Product name → "GymNode".**
 
 **Needed before M2–M3**
 - **Q6. URL language prefix**: OK to skip `/bn/` `/en/` in URLs (language from the user's setting)? Public pages (QR join form, receipt) will pick the gym's default language.
