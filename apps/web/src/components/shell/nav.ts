@@ -34,9 +34,9 @@ const MGMT: GymRole[] = ["owner", "manager"];
 // Order and labels from Sidebar.dc.html.
 export const NAV_ITEMS: NavItem[] = [
   { key: "dashboard", href: "/app", icon: LayoutGrid, roles: ALL },
-  { key: "members", href: null, icon: Users, roles: ALL, milestone: "M2" },
+  { key: "members", href: "/app/members", icon: Users, roles: ALL },
   { key: "payments", href: null, icon: WalletCards, roles: DESK, milestone: "M3" },
-  { key: "packages", href: null, icon: Box, roles: DESK, milestone: "M2" },
+  { key: "packages", href: "/app/packages", icon: Box, roles: DESK },
   { key: "access", href: null, icon: Lock, roles: DESK, milestone: "M8" },
   { key: "staff", href: "/app/staff", icon: Dumbbell, roles: MGMT },
   { key: "sales", href: null, icon: ShoppingBag, roles: DESK, milestone: "M5" },

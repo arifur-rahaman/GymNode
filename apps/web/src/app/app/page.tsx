@@ -79,7 +79,15 @@ export default async function DashboardPage() {
         ) : null}
       </Card>
 
-      <EmptyState icon={<Users />} message={t("nextMembers")} />
+      <EmptyState
+        icon={<Users />}
+        message={t("nextMembers")}
+        action={
+          <Button asChild>
+            <Link href="/app/members">{t("goMembers")}</Link>
+          </Button>
+        }
+      />
     </div>
   );
 }

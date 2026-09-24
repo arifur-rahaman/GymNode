@@ -16,11 +16,32 @@ export function fieldErrorsFrom(error: z.ZodError): Record<string, string> {
   return out;
 }
 
+// Exception names raised by our database functions → translation codes (messages "errors").
+const DB_ERRORS: Record<string, string> = {
+  invalid_package: "invalidPackage",
+  invalid_amount: "invalidAmount",
+  invalid_discount: "invalidDiscount",
+  duplicate_transaction_id: "duplicateTransaction",
+  transaction_id_required: "transactionRequired",
+  member_not_approved: "memberNotApproved",
+  not_freezable: "notFreezable",
+  not_frozen: "notFreezable",
+  freeze_too_long: "freezeTooLong",
+  invalid_dates: "invalidDates",
+  already_registered: "alreadyRegistered",
+  gym_not_found: "gymNotFound",
+  rate_limited: "rateLimited",
+  invalid_trainer: "invalidTrainer",
+  too_many_gyms: "tooManyGyms",
+};
+
 /** Maps Supabase Auth / Postgres errors to our translation codes. */
 export function errorCode(error: { code?: string; message?: string } | null | undefined): string {
   if (!error) return "unknown";
   const code = error.code ?? "";
   const message = (error.message ?? "").toLowerCase();
+  const dbCode = DB_ERRORS[message.trim()];
+  if (dbCode) return dbCode;
   if (code === "invalid_credentials" || message.includes("invalid login credentials"))
     return "invalidLogin";
   if (code === "email_not_confirmed") return "emailNotConfirmed";
@@ -39,7 +60,6 @@ export function errorCode(error: { code?: string; message?: string } | null | un
   if (code === "weak_password") return "weakPassword";
   if (code === "same_password") return "samePassword";
   if (code === "otp_expired" || code === "flow_state_expired") return "linkExpired";
-  if (message.includes("too_many_gyms")) return "tooManyGyms";
   if (code === "42501" || message.includes("forbidden") || message.includes("row-level security"))
     return "forbidden";
   if (message.includes("fetch failed") || message.includes("network")) return "network";
