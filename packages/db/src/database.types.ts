@@ -1151,6 +1151,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      cancel_payment: {
+        Args: { p_payment_id: string; p_reason: string }
+        Returns: undefined
+      }
       clear_password_change_flag: { Args: never; Returns: undefined }
       create_gym_with_owner: {
         Args: {
@@ -1182,10 +1186,12 @@ export type Database = {
           name: string
         }[]
       }
+      get_receipt: { Args: { p_token: string }; Returns: Json }
       gym_access_state: {
         Args: { p_gym_id: string }
         Returns: Database["public"]["Enums"]["gym_status"]
       }
+      gym_money_snapshot: { Args: { p_gym_id: string }; Returns: Json }
       mark_staff_password_reset: {
         Args: { p_gym_user_id: string }
         Returns: undefined
@@ -1196,6 +1202,19 @@ export type Database = {
           status: string
           total: number
         }[]
+      }
+      pay_due: {
+        Args: {
+          p_amount_paisa: number
+          p_member_id: string
+          p_method?: Database["public"]["Enums"]["payment_method"]
+          p_transaction_id?: string
+        }
+        Returns: Json
+      }
+      payment_stats: {
+        Args: { p_from: string; p_gym_id: string; p_to: string }
+        Returns: Json
       }
       record_payment_and_renew: {
         Args: {
@@ -1253,6 +1272,7 @@ export type Database = {
         Args: { p_membership_id: string }
         Returns: undefined
       }
+      verify_payment: { Args: { p_payment_id: string }; Returns: undefined }
     }
     Enums: {
       billing_method: "cash" | "bkash" | "nagad" | "rocket" | "card" | "bank"
