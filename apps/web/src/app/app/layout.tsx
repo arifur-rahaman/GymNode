@@ -23,13 +23,20 @@ export default async function GymPanelLayout({ children }: LayoutProps<"/app">) 
   if (!membership) redirect((await isPlatformAdmin()) ? "/admin" : "/onboarding");
   if (membership.role === "owner" && !membership.gym.onboardingCompletedAt) redirect("/onboarding");
 
-  const [memberships, accessState] = await Promise.all([
+  const supabase = await createClient();
+  const canVerify = membership.role === "owner" || membership.role === "manager";
+  const [memberships, accessState, snapshot] = await Promise.all([
     getMemberships(),
     getGymAccessState(membership.gymId),
+    canVerify
+      ? supabase.rpc("gym_money_snapshot", { p_gym_id: membership.gymId })
+      : Promise.resolve({ data: null }),
   ]);
+  const pendingCount = Number(
+    (snapshot.data as { pending_count?: number } | null)?.pending_count ?? 0,
+  );
 
   // Branch shown under the gym name: the only branch, or the staff member's first branch.
-  const supabase = await createClient();
   const { data: branches } = await supabase
     .from("branches")
     .select("id, name")
@@ -57,6 +64,7 @@ export default async function GymPanelLayout({ children }: LayoutProps<"/app">) 
       gyms={memberships.map((m) => ({ id: m.gymId, name: m.gym.name }))}
       userName={profile?.full_name || ""}
       accessState={accessState}
+      badges={pendingCount ? { payments: pendingCount } : {}}
       daysLeft={daysLeft}
       theme={theme}
     >

@@ -26,6 +26,7 @@ export type ShellProps = {
   /** Days left in trial (trial) or before read-only (past_due). */
   daysLeft: number | null;
   theme: Theme;
+  badges?: Record<string, number>;
 };
 
 /**
@@ -35,7 +36,8 @@ export type ShellProps = {
  *  - <768px: top bar + bottom tab bar, full menu in a sheet
  */
 export async function AppShell(props: ShellProps) {
-  const { children, role, gym, branchName, gyms, userName, accessState, daysLeft, theme } = props;
+  const { children, role, gym, branchName, gyms, userName, accessState, daysLeft, theme, badges } =
+    props;
   const t = await getTranslations("shell");
   const tr = await getTranslations("roles");
   const ta = await getTranslations("auth");
@@ -61,7 +63,7 @@ export async function AppShell(props: ShellProps) {
         </div>
         <GymSwitcher gyms={gyms} activeGymId={gym.id} />
         <nav aria-label={t("menu")} className="flex-1">
-          <SidebarNav role={role} />
+          <SidebarNav role={role} badges={badges} />
         </nav>
         {accessState === "trial" && daysLeft !== null ? (
           <div className="rounded-md bg-surface-2 p-3.5">

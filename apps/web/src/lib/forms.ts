@@ -33,6 +33,9 @@ const DB_ERRORS: Record<string, string> = {
   rate_limited: "rateLimited",
   invalid_trainer: "invalidTrainer",
   too_many_gyms: "tooManyGyms",
+  not_pending: "notPending",
+  already_cancelled: "alreadyCancelled",
+  reason_required: "reasonRequired",
 };
 
 /** Maps Supabase Auth / Postgres errors to our translation codes. */

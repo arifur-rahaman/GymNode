@@ -5,7 +5,6 @@ import { useForm, useWatch, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import {
-  PAYMENT_METHODS,
   formatDateShort,
   formatTaka,
   needsTransactionId,
@@ -20,7 +19,7 @@ import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useErrorText } from "@/lib/use-error-text";
-import { cn } from "@/lib/utils";
+import { MethodPicker } from "./method-picker";
 
 export type PackageOption = {
   id: string;
@@ -133,37 +132,10 @@ export function PaymentFields({
         </Field>
       </div>
 
-      <fieldset className="flex flex-col gap-1.5">
-        <legend className="mb-1.5 text-sm font-medium">{t("method")}</legend>
-        <div
-          role="radiogroup"
-          aria-label={t("method")}
-          className="grid grid-cols-3 gap-2 sm:grid-cols-5"
-        >
-          {PAYMENT_METHODS.map((m) => {
-            const selected = method === m;
-            return (
-              <button
-                key={m}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                onClick={() =>
-                  form.setValue("method", m as PaymentMethod, { shouldValidate: true })
-                }
-                className={cn(
-                  "h-11 cursor-pointer rounded-sm text-sm",
-                  selected
-                    ? "border-2 border-accent bg-surface-2 font-semibold"
-                    : "border border-border bg-bg hover:bg-surface-2",
-                )}
-              >
-                {tm(m)}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
+      <MethodPicker
+        value={method as PaymentMethod}
+        onChange={(m) => form.setValue("method", m, { shouldValidate: true })}
+      />
 
       {needsTransactionId(method as PaymentMethod) ? (
         <Field

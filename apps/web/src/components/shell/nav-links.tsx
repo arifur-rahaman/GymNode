@@ -10,7 +10,16 @@ import { BOTTOM_KEYS, HOME_ICON, isActive, navFor, NAV_ITEMS } from "./nav";
 type GymRole = Database["public"]["Enums"]["gym_role"];
 
 /** Full nav list with labels (desktop sidebar and the mobile "more" sheet). */
-export function SidebarNav({ role, onNavigate }: { role: GymRole; onNavigate?: () => void }) {
+export function SidebarNav({
+  role,
+  onNavigate,
+  badges = {},
+}: {
+  role: GymRole;
+  onNavigate?: () => void;
+  /** Count pills, e.g. unverified payments (amber, as in Sidebar.dc.html). */
+  badges?: Record<string, number>;
+}) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   return (
@@ -24,6 +33,10 @@ export function SidebarNav({ role, onNavigate }: { role: GymRole; onNavigate?: (
             {href === null ? (
               <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-medium text-muted">
                 {t("comingSoon")}
+              </span>
+            ) : badges[key] ? (
+              <span className="num rounded-full bg-warning px-2 py-0.5 text-[11px] font-bold text-on-accent">
+                {badges[key]}
               </span>
             ) : null}
           </>

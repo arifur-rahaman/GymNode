@@ -107,3 +107,20 @@
     transform: translateY(16px);
   }
 }
+
+/* Receipts and other pages print in the light palette (no dark ink-heavy pages), without the demo banner. */
+@media print {
+  html[data-theme] {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f4f5f1;
+    --border: #e2e4de;
+    --text: #111214;
+    --text-muted: #555b64;
+    --accent-text: #3f6212;
+    color-scheme: light;
+  }
+  body > [role="note"] {
+    display: none;
+  }
+}

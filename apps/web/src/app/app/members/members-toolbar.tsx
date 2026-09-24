@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -29,24 +29,30 @@ export function MembersToolbar({
   const [pending, startTransition] = useTransition();
   const [q, setQ] = useState(params.q);
 
-  // Build on the *current* address, not the props from the last render: a delayed search
-  // must not undo a tab or package the user picked in the meantime.
-  function go(next: Partial<Omit<Params, "page">>) {
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // One place builds the address: the search box state is the source of truth for `q`, and any
+  // filter change cancels a search update that is still waiting, so it can't undo the change.
+  function go(next: Partial<Pick<Params, "tab" | "pkg">>) {
+    if (searchTimer.current) clearTimeout(searchTimer.current);
     const sp = new URLSearchParams(window.location.search);
     sp.delete("page");
-    for (const [key, value] of Object.entries(next)) {
+    const merged = { tab: sp.get("tab") ?? "all", pkg: sp.get("pkg") ?? "", ...next, q: q.trim() };
+    for (const [key, value] of Object.entries(merged)) {
       if (!value || (key === "tab" && value === "all")) sp.delete(key);
-      else sp.set(key, String(value));
+      else sp.set(key, value);
     }
     startTransition(() => router.replace(`${pathname}${sp.size ? `?${sp}` : ""}`));
   }
 
   // Search as you type, with a short pause so slow connections aren't flooded.
   useEffect(() => {
-    if (q === params.q) return;
-    const id = setTimeout(() => go({ q }), 350);
-    return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `go` reads the latest params
+    if (q.trim() === params.q) return;
+    searchTimer.current = setTimeout(() => go({}), 350);
+    return () => {
+      if (searchTimer.current) clearTimeout(searchTimer.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `go` reads the latest state
   }, [q]);
 
   const tabs = [

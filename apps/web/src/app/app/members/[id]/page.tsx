@@ -29,6 +29,8 @@ import {
   signedPhotoUrls,
 } from "@/lib/gym-context";
 import { createClient } from "@/lib/supabase/server";
+import { PaymentRowActions } from "@/app/app/payments/row-actions";
+import { getUserId } from "@/lib/auth";
 import { DeleteMemberButton, FreezeControls, RenewSheet } from "./member-actions";
 
 export async function generateMetadata({
@@ -47,6 +49,8 @@ type PaymentRow = {
   amount: number;
   method: string;
   status: string;
+  token: string;
+  byMe: boolean;
 };
 
 export default async function MemberProfilePage({ params }: PageProps<"/app/members/[id]">) {
@@ -56,10 +60,13 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
   const tg = await getTranslations("genders");
   const ts = await getTranslations("status");
   const tc = await getTranslations("common");
+  const tp = await getTranslations("payments");
   const membership = await requireGym();
   const frontDesk = hasRole(membership, FRONT_DESK);
   const supabase = await createClient();
   const today = todayInDhaka();
+  const userId = await getUserId();
+  const canManage = hasRole(membership, MANAGEMENT);
 
   const [{ data: ov }, { data: m }] = await Promise.all([
     supabase.from("member_overview").select("*").eq("id", id).maybeSingle(),
@@ -83,7 +90,9 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
     frontDesk
       ? supabase
           .from("payments")
-          .select("id, paid_at, invoice_no, amount_paisa, method, status")
+          .select(
+            "id, paid_at, invoice_no, amount_paisa, method, status, receipt_token, received_by",
+          )
           .eq("member_id", id)
           .order("paid_at", { ascending: false })
           .limit(50)
@@ -114,6 +123,8 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
     amount: p.amount_paisa,
     method: p.method,
     status: p.status,
+    token: p.receipt_token,
+    byMe: p.received_by === userId,
   }));
   const paymentColumns: Column<PaymentRow>[] = [
     {
@@ -145,6 +156,25 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
         ) : (
           <Badge tone="gray">{ts("cancelled")}</Badge>
         ),
+    },
+    {
+      key: "actions",
+      header: <span className="sr-only">{t("colStatus")}</span>,
+      width: "150px",
+      align: "end",
+      mobileFooter: true,
+      cell: (r) => (
+        <PaymentRowActions
+          paymentId={r.id}
+          receiptToken={r.token}
+          label={`${r.invoice} · ${formatTaka(r.amount)}`}
+          canVerify={canManage && r.status === "pending_verification"}
+          canCancel={
+            r.status !== "cancelled" &&
+            (canManage || (r.status === "pending_verification" && r.byMe))
+          }
+        />
+      ),
     },
   ];
 
@@ -268,6 +298,11 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
                   isFirstMembership={!hasMembership}
                   duePaisa={duePaisa}
                 />
+                {duePaisa > 0 ? (
+                  <Button asChild variant="secondary">
+                    <Link href={`/app/payments?view=dues&member=${m.id}`}>{tp("payDue")}</Link>
+                  </Button>
+                ) : null}
                 <Button asChild variant="secondary">
                   <a href={whatsappUrl(m.phone)} target="_blank" rel="noopener noreferrer">
                     <MessageCircle className="text-success" /> {t("whatsapp")}

@@ -35,7 +35,7 @@ const MGMT: GymRole[] = ["owner", "manager"];
 export const NAV_ITEMS: NavItem[] = [
   { key: "dashboard", href: "/app", icon: LayoutGrid, roles: ALL },
   { key: "members", href: "/app/members", icon: Users, roles: ALL },
-  { key: "payments", href: null, icon: WalletCards, roles: DESK, milestone: "M3" },
+  { key: "payments", href: "/app/payments", icon: WalletCards, roles: DESK },
   { key: "packages", href: "/app/packages", icon: Box, roles: DESK },
   { key: "access", href: null, icon: Lock, roles: DESK, milestone: "M8" },
   { key: "staff", href: "/app/staff", icon: Dumbbell, roles: MGMT },
