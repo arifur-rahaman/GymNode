@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Super Admin – Operations</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; display: flex; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+<dc-import name="SASidebar" active="devices" dark="{{dark}}" hint-size="248px,1000px"></dc-import>
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; padding: 28px 32px; box-sizing: border-box; min-width: 0">
+
+<header style="display: flex; flex-direction: column; gap: 2px">
+<h1 style="margin: 0; font-size: 26px">অপারেশনস</h1>
+<span style="font-size: 14px; color: {{t.muted}}">সব জিমের মেশিন, মেসেজ খরচ ও সাপোর্ট এক জায়গায়</span>
+</header>
+
+<section style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 14px; color: {{t.muted}}">{{k.label}}</span>
+<span class="num" style="font-size: 28px; font-weight: 700; {{k.style}}">{{k.value}}</span>
+<span class="num" style="font-size: 12px; color: {{t.muted}}">{{k.sub}}</span>
+</div>
+</sc-for>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-grow: 1; min-height: 0">
+
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px">
+<h2 style="margin: 0; font-size: 17px">অফলাইন মেশিন</h2>
+<span class="num" style="font-size: 13px; color: {{t.danger}}">3 / 61</span>
+</div>
+<sc-for list="{{devices}}" as="d" hint-placeholder-count="5">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-top: 1px solid {{t.border}}">
+<span style="width: 10px; height: 10px; border-radius: 5px; flex-shrink: 0; {{d.dot}}"></span>
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 14px; font-weight: 600">{{d.gym}}</span><span style="font-size: 12px; color: {{t.muted}}">{{d.door}} · {{d.model}}</span></span>
+<span style="font-size: 12px; color: {{t.muted}}; text-align: right">{{d.since}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px">
+<h2 style="margin: 0; font-size: 17px">মেসেজ ব্যবহার · এই মাস</h2>
+<span style="font-size: 13px; color: {{t.muted}}">SMS / হোয়াটসঅ্যাপ</span>
+</div>
+<sc-for list="{{usage}}" as="u" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 12px 20px; border-top: 1px solid {{t.border}}">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="font-weight: 600">{{u.gym}}</span><span class="num" style="color: {{t.muted}}">{{u.sms}} SMS · {{u.wa}} WA</span></div>
+<div style="height: 8px; border-radius: 4px; background: {{t.chip}}"><div style="height: 8px; border-radius: 4px; {{u.bar}}"></div></div>
+<span class="num" style="font-size: 12px; {{u.noteStyle}}">{{u.note}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px">
+<h2 style="margin: 0; font-size: 17px">সাপোর্ট টিকেট</h2>
+<span class="num" style="font-size: 13px; color: {{t.warning}}">5 খোলা</span>
+</div>
+<sc-for list="{{tickets}}" as="s" hint-placeholder-count="5">
+<a href="#" style="display: flex; flex-direction: column; gap: 6px; padding: 12px 20px; border-top: 1px solid {{t.border}}; text-decoration: none; color: {{t.text}}">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 14px; font-weight: 600">{{s.title}}</span><span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; {{s.badge}}">{{s.priority}}</span></div>
+<span style="font-size: 12px; color: {{t.muted}}">{{s.gym}} · {{s.time}}</span>
+</a>
+</sc-for>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', success: '#4ADE80', warning: '#FBBF24', danger: '#F87171' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', success: '#15803D', warning: '#B45309', danger: '#B91C1C' };
+    function badge(k) {
+      var m = dark ? { red: 'background: rgba(248,113,113,0.14); color: #F87171', amber: 'background: rgba(251,191,36,0.14); color: #FBBF24', gray: 'background: rgba(161,167,176,0.16); color: #C3C8CF' }
+                   : { red: 'background: #FEE2E2; color: #991B1B', amber: 'background: #FEF3C7; color: #92400E', gray: 'background: #E5E7EB; color: #374151' };
+      return m[k];
+    }
+    return {
+      t: t, dark: dark, accent: accent,
+      kpis: [
+        { label: 'মোট মেশিন', value: '61', sub: '58 অনলাইন', style: '' },
+        { label: 'অফলাইন', value: '3', sub: '১ ঘণ্টার বেশি', style: 'color: ' + t.danger },
+        { label: 'এই মাসে SMS', value: '18,420', sub: 'খরচ আপনার বিলে যোগ হয়', style: '' },
+        { label: 'এই মাসে হোয়াটসঅ্যাপ', value: '31,050', sub: 'Meta API কনভারসেশন', style: 'color: ' + t.success }
+      ],
+      devices: [
+        { gym: 'মাসল ফ্যাক্টরি', door: 'মেইন গেট', model: 'SenseFace 2A', since: '৩ ঘণ্টা', dot: 'background: ' + t.danger },
+        { gym: 'গোল্ডেন জিম', door: 'লেডিস জোন', model: 'SenseFace 2A', since: '১ ঘণ্টা', dot: 'background: ' + t.danger },
+        { gym: 'এক্সট্রিম ফিট', door: 'মেইন গেট', model: 'F22', since: '২১ দিন', dot: 'background: ' + t.danger },
+        { gym: 'পাওয়ার হাউস জিম', door: 'লেডিস জোন', model: 'SenseFace 2A', since: 'অফলাইন মোড', dot: 'background: ' + t.warning },
+        { gym: 'ফিট জোন', door: 'মেইন গেট', model: 'SenseFace 2A', since: 'অনলাইন', dot: 'background: ' + t.success }
+      ],
+      usage: [
+        { gym: 'গোল্ডেন জিম', sms: '3,200', wa: '5,100', bar: 'width: 92%; background: #FF6B2C', note: 'প্ল্যান সীমার 92% · সতর্ক করুন', noteStyle: 'color: ' + t.warning },
+        { gym: 'পাওয়ার হাউস জিম', sms: '2,100', wa: '4,300', bar: 'width: 64%; background: ' + accent, note: 'সীমার 64%', noteStyle: 'color: ' + t.muted },
+        { gym: 'ফিট জোন', sms: '1,800', wa: '3,900', bar: 'width: 57%; background: ' + accent, note: 'সীমার 57%', noteStyle: 'color: ' + t.muted },
+        { gym: 'লেডিস ফিটনেস', sms: '1,200', wa: '2,700', bar: 'width: 40%; background: ' + accent, note: 'সীমার 40%', noteStyle: 'color: ' + t.muted },
+        { gym: 'বডি শেপ জিম', sms: '700', wa: '1,100', bar: 'width: 30%; background: ' + accent, note: 'সীমার 30%', noteStyle: 'color: ' + t.muted }
+      ],
+      tickets: [
+        { title: 'দরজা খুলছে না, মেশিন অফলাইন', gym: 'মাসল ফ্যাক্টরি', time: '৩ ঘণ্টা আগে', priority: 'জরুরি', badge: badge('red') },
+        { title: 'বিকাশ পেমেন্ট যাচাই হচ্ছে না', gym: 'গোল্ডেন জিম', time: '৫ ঘণ্টা আগে', priority: 'জরুরি', badge: badge('red') },
+        { title: 'পুরনো Excel ডেটা তুলে দিতে হবে', gym: 'আয়রন প্যারাডাইস', time: 'গতকাল', priority: 'সাধারণ', badge: badge('amber') },
+        { title: 'নতুন প্যাকেজ কীভাবে বানাব?', gym: 'কোর ফিটনেস', time: 'গতকাল', priority: 'সাধারণ', badge: badge('gray') },
+        { title: 'রিপোর্টে ভুল তারিখ', gym: 'বডি শেপ জিম', time: '২ দিন আগে', priority: 'সাধারণ', badge: badge('gray') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

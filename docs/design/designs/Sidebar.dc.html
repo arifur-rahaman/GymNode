@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Sidebar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<aside style="width: 248px; height: 1000px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; padding: 20px 14px; background: {{t.surface}}; border-right: 1px solid {{t.border}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<div style="width: 36px; height: 36px; border-radius: 10px; background: #C6FF3D; color: #0E0F12; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px">G</div>
+<div style="font-size: 16px; font-weight: 700">[প্রোডাক্টের নাম]</div>
+</div>
+<button style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font: inherit; cursor: pointer; text-align: left">
+<span style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: 14px; font-weight: 600">পাওয়ার হাউস জিম</span>
+<span style="font-size: 12px; color: {{t.muted}}">ধানমন্ডি শাখা</span>
+</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"></path></svg>
+</button>
+<nav style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="12">
+<a href="#" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; font-size: 14px; {{it.style}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{it.d}}"></path></svg>
+<span style="flex-grow: 1">{{it.label}}</span>
+<sc-if value="{{it.hasCount}}" hint-placeholder-val="{{false}}">
+<span style="font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgba(251,191,36,0.16); color: {{t.warning}}">{{it.count}}</span>
+</sc-if>
+</a>
+</sc-for>
+</nav>
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; background: {{t.chip}}">
+<div style="font-size: 13px; font-weight: 600">ফ্রি ট্রায়াল · ১২ দিন বাকি</div>
+<div style="height: 6px; border-radius: 3px; background: {{t.border}}"><div style="width: 60%; height: 6px; border-radius: 3px; background: #C6FF3D"></div></div>
+<a href="#" style="font-size: 13px; color: {{t.accentText}}; text-decoration: none">প্ল্যান দেখুন</a>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<div style="width: 36px; height: 36px; border-radius: 18px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-weight: 700">ম</div>
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 14px; font-weight: 600">মালিক</span>
+<span style="font-size: 12px; color: {{t.muted}}">অ্যাডমিন</span>
+</div>
+</div>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["dashboard","members","payments","packages","access","staff","sales","accounts","reports","messages","website","settings"],"default":"dashboard"},"dark":{"editor":"boolean","default":true},"$preview":{"width":248,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var active = this.props.active ?? 'dashboard';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', accentText: '#C6FF3D', warning: '#FBBF24' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', accentText: '#3F6212', warning: '#B45309' };
+    var list = [
+      ['dashboard', 'ড্যাশবোর্ড', 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z'],
+      ['members', 'মেম্বার', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75'],
+      ['payments', 'পেমেন্ট', 'M2 6h20v14H2zM2 10h20M16 15h2', '12'],
+      ['packages', 'প্যাকেজ', 'M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8'],
+      ['access', 'অ্যাক্সেস কন্ট্রোল', 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4'],
+      ['staff', 'ট্রেইনার ও স্টাফ', 'M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6M6 7v10M18 7v10'],
+      ['sales', 'বিক্রি ও স্টক', 'M6 2L3 6v14h18V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0'],
+      ['accounts', 'আয়-ব্যয়', 'M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4z'],
+      ['reports', 'রিপোর্ট', 'M18 20V10M12 20V4M6 20v-6'],
+      ['messages', 'হোয়াটসঅ্যাপ ও SMS', 'M7.9 20A9 9 0 1 0 4 16.1L2 22z'],
+      ['website', 'ওয়েবসাইট', 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20'],
+      ['settings', 'সেটিংস', 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1']
+    ];
+    var items = list.map(function (x) {
+      var on = x[0] === active;
+      return {
+        label: x[1], d: x[2], hasCount: !!x[3], count: x[3] || '',
+        style: on ? 'background: #C6FF3D; color: #0E0F12; font-weight: 600' : 'color: ' + t.muted
+      };
+    });
+    return { t: t, items: items };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Member App – Progress</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1020px; display: flex; flex-direction: column; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+<main style="display: flex; flex-direction: column; gap: 16px; padding: 20px; flex-grow: 1">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<h1 style="margin: 0; font-size: 22px">প্রোগ্রেস</h1>
+<button style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid {{t.border}}; background: {{t.surface}}; color: {{t.text}}; font-size: 14px">+ মাপ যোগ করুন</button>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{stats}}" as="s" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 12px; border-radius: 14px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 12px; color: {{t.muted}}">{{s.label}}</span>
+<span class="num" style="font-size: 20px; font-weight: 700">{{s.value}}</span>
+<span class="num" style="font-size: 12px; {{s.subStyle}}">{{s.sub}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 18px; border-radius: 18px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 16px; font-weight: 700">ওজন · শেষ ৬ মাস</span>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; height: 150px; border-bottom: 1px solid {{t.border}}; padding: 0 4px">
+<sc-for list="{{weight}}" as="w" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span class="num" style="font-size: 11px; color: {{t.muted}}">{{w.kg}}</span>
+<div style="width: 30px; border-radius: 6px 6px 0 0; {{w.style}}"></div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: {{t.muted}}; padding: 0 4px"><span>এপ্রি</span><span>মে</span><span>জুন</span><span>জুলা</span><span>আগ</span><span>সেপ্ট</span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 16px; font-weight: 700">শরীরের মাপ</span>
+<sc-for list="{{measures}}" as="m" hint-placeholder-count="4">
+<div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 6px 0; border-bottom: 1px solid {{t.border}}">
+<span>{{m.name}}</span>
+<span style="display: flex; gap: 10px; align-items: baseline"><span class="num" style="font-weight: 600">{{m.now}}</span><span class="num" style="font-size: 12px; {{m.diffStyle}}">{{m.diff}}</span></span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 16px; font-weight: 700">প্রোগ্রেস ছবি</span><span style="font-size: 12px; color: {{t.muted}}">শুধু আপনি দেখতে পারবেন</span></div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{photos}}" as="p" hint-placeholder-count="3">
+<div style="height: 110px; border-radius: 12px; background: {{t.chip}}; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 8px; font-size: 12px; color: {{t.muted}}">{{p}}</div>
+</sc-for>
+</div>
+</div>
+</main>
+
+<nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 8px 6px 18px 6px; background: {{t.surface}}; border-top: 1px solid {{t.border}}">
+<sc-for list="{{tabs}}" as="n" hint-placeholder-count="5">
+<a href="{{n.href}}" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 48px; {{n.style}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.d}}"></path></svg>
+<span style="font-size: 11px">{{n.label}}</span>
+</a>
+</sc-for>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":390,"height":1020}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', accentText: accent, success: '#4ADE80' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', accentText: '#3F6212', success: '#15803D' };
+    var kg = [68, 67.1, 66.4, 65.9, 65.2, 64.8];
+    var weight = kg.map(function (k, i) { return { kg: k, style: 'height: ' + Math.round((k - 60) * 13) + 'px; background: ' + (i === kg.length - 1 ? accent : (dark ? '#3A3E47' : '#D4D8CF')) }; });
+    var active = 'progress';
+    var list = [
+      ['home', 'হোম', 'M-Home.dc.html', 'm3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10'],
+      ['workout', 'ওয়ার্কআউট', 'M-Workout.dc.html', 'M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6M6 7v10M18 7v10'],
+      ['diet', 'ডায়েট', 'M-Diet.dc.html', 'M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zM21 15v7'],
+      ['progress', 'প্রোগ্রেস', 'M-Progress.dc.html', 'M3 3v18h18M7 14l4-4 4 4 5-6'],
+      ['membership', 'মেম্বারশিপ', 'M-Membership.dc.html', 'M2 6h20v14H2zM2 10h20M16 15h2']
+    ];
+    var tabs = list.map(function (x) { var on = x[0] === active; return { label: x[1], href: x[2], d: x[3], style: 'color: ' + (on ? t.accentText : t.muted) + (on ? '; font-weight: 600' : '') }; });
+    var good = 'color: ' + t.success;
+    return {
+      t: t, accent: accent, tabs: tabs, weight: weight,
+      stats: [
+        { label: 'ওজন', value: '64.8 kg', sub: '−3.2 kg', subStyle: good },
+        { label: 'BMI', value: '23.4', sub: 'স্বাভাবিক', subStyle: 'color: ' + t.muted },
+        { label: 'বডি ফ্যাট', value: '24%', sub: '−2%', subStyle: good }
+      ],
+      measures: [
+        { name: 'কোমর', now: '76 cm', diff: '−4 cm', diffStyle: good },
+        { name: 'বুক', now: '88 cm', diff: '−1 cm', diffStyle: good },
+        { name: 'হিপ', now: '96 cm', diff: '−3 cm', diffStyle: good },
+        { name: 'বাহু', now: '28 cm', diff: '+0.5 cm', diffStyle: 'color: ' + t.muted }
+      ],
+      photos: ['এপ্রিল', 'জুলাই', 'সেপ্টেম্বর']
+    };
+  }
+}
+</script>
+</body>
+</html>

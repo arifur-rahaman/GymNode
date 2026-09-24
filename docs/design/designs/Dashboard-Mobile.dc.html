@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Dashboard – Mobile Web</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1380px; display: flex; flex-direction: column; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: {{t.surface}}; border-bottom: 1px solid {{t.border}}">
+<button aria-label="মেনু খুলুন" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+</button>
+<div style="display: flex; flex-direction: column; align-items: center">
+<span style="font-size: 15px; font-weight: 700">পাওয়ার হাউস জিম</span>
+<span style="font-size: 12px; color: {{t.muted}}">ধানমন্ডি শাখা</span>
+</div>
+<button aria-label="নোটিফিকেশন" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+</button>
+</header>
+
+<main style="display: flex; flex-direction: column; gap: 16px; padding: 16px; flex-grow: 1">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<h1 style="margin: 0; font-size: 22px">ড্যাশবোর্ড</h1>
+<span style="font-size: 12px; padding: 4px 10px; border-radius: 999px; background: {{t.chip}}; color: {{t.muted}}">নমুনা ডেটা</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="font-size: 14px; color: {{t.muted}}">আজকের কালেকশন</div>
+<div class="num" style="font-size: 38px; font-weight: 700; line-height: 1.05; color: {{t.accentText}}">৳18,500</div>
+<div class="num" style="font-size: 13px; color: {{t.success}}">+12% গতকালের চেয়ে</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 14px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="font-size: 13px; color: {{t.muted}}">{{k.label}}</div>
+<div class="num" style="font-size: 22px; font-weight: 700; {{k.valStyle}}">{{k.value}}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 16px">আয় বনাম ব্যয় · ৭ দিন</h2>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; height: 130px; border-bottom: 1px solid {{t.border}}">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<div style="display: flex; align-items: flex-end; gap: 3px">
+<div style="width: 12px; border-radius: 3px 3px 0 0; background: {{accent}}; {{d.inc}}"></div>
+<div style="width: 12px; border-radius: 3px 3px 0 0; background: #FF6B2C; {{d.exp}}"></div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px">
+<h2 style="margin: 0; font-size: 16px">এই সপ্তাহে মেয়াদ শেষ</h2>
+<a href="#" style="font-size: 13px; text-decoration: none; color: {{t.accentText}}">সব</a>
+</div>
+<sc-for list="{{expiring}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-top: 1px solid {{t.border}}">
+<span style="width: 36px; height: 36px; border-radius: 18px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-weight: 700">{{r.initial}}</span>
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 14px; font-weight: 600">{{r.name}}</span><span style="font-size: 12px; color: {{t.muted}}">{{r.pkg}}</span></span>
+<span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; {{r.badge}}">{{r.left}}</span>
+<button aria-label="হোয়াটসঅ্যাপ রিমাইন্ডার" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.success}}; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"></path></svg>
+</button>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<div style="padding: 14px 16px"><h2 style="margin: 0; font-size: 16px; display: flex; align-items: center; gap: 8px"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{t.success}}"></span>লাইভ চেক-ইন</h2></div>
+<sc-for list="{{checkins}}" as="c" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-top: 1px solid {{t.border}}">
+<span class="num" style="font-size: 13px; color: {{t.muted}}; width: 38px">{{c.time}}</span>
+<span style="font-size: 14px; font-weight: 600; flex-grow: 1">{{c.name}}</span>
+<span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; {{c.badge}}">{{c.status}}</span>
+</div>
+</sc-for>
+</div>
+</main>
+
+<nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 8px 6px 16px 6px; background: {{t.surface}}; border-top: 1px solid {{t.border}}">
+<sc-for list="{{tabs}}" as="n" hint-placeholder-count="5">
+<a href="#" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 48px; {{n.style}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.d}}"></path></svg>
+<span style="font-size: 11px">{{n.label}}</span>
+</a>
+</sc-for>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":390,"height":1380}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', accentText: accent, success: '#4ADE80', warning: '#FBBF24', orange: '#FF8A4C' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', accentText: '#3F6212', success: '#15803D', warning: '#B45309', orange: '#C2410C' };
+    function badge(k) {
+      var m = dark ? { red: 'background: rgba(248,113,113,0.14); color: #F87171', amber: 'background: rgba(251,191,36,0.14); color: #FBBF24', green: 'background: rgba(74,222,128,0.14); color: #4ADE80' }
+                   : { red: 'background: #FEE2E2; color: #991B1B', amber: 'background: #FEF3C7; color: #92400E', green: 'background: #DCFCE7; color: #166534' };
+      return m[k];
+    }
+    var inc = [74, 58, 85, 70, 95, 78, 100];
+    var exp = [45, 20, 32, 38, 26, 42, 34];
+    var days = inc.map(function (v, i) { return { inc: 'height: ' + Math.round(v * 1.2) + 'px', exp: 'height: ' + Math.round(exp[i] * 1.2) + 'px' }; });
+    var tabList = [
+      ['হোম', 'm3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10', true],
+      ['মেম্বার', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
+      ['পেমেন্ট', 'M2 6h20v14H2zM2 10h20M16 15h2'],
+      ['অ্যাক্সেস', 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4'],
+      ['আরও', 'M5 12h.01M12 12h.01M19 12h.01']
+    ];
+    return {
+      t: t, accent: accent, days: days,
+      tabs: tabList.map(function (x) { return { label: x[0], d: x[1], style: 'color: ' + (x[2] ? t.accentText : t.muted) + (x[2] ? '; font-weight: 600' : '') }; }),
+      kpis: [
+        { label: 'এই মাসের আয়', value: '৳3.42L', valStyle: '' },
+        { label: 'সক্রিয় মেম্বার', value: '312', valStyle: '' },
+        { label: 'মোট বকেয়া', value: '৳46,800', valStyle: 'color: ' + t.warning },
+        { label: 'আজ চেক-ইন', value: '46', valStyle: 'color: ' + t.success }
+      ],
+      expiring: [
+        { initial: 'র', name: 'রাফি আহমেদ', pkg: 'মাসিক', left: 'আজ', badge: badge('red') },
+        { initial: 'ত', name: 'তানিয়া ইসলাম', pkg: '৩ মাস', left: '২ দিন', badge: badge('amber') },
+        { initial: 'স', name: 'সাকিব হাসান', pkg: 'মাসিক', left: '৫ দিন', badge: badge('amber') }
+      ],
+      checkins: [
+        { time: '7:42', name: 'নাদিয়া করিম', status: 'অনুমোদিত', badge: badge('green') },
+        { time: '7:38', name: 'ইমরান হোসেন', status: 'আটকানো', badge: badge('red') },
+        { time: '7:31', name: 'ফাহিম রহমান', status: 'অনুমোদিত', badge: badge('green') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

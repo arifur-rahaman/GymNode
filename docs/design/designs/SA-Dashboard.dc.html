@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Super Admin – Dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; display: flex; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+<dc-import name="SASidebar" active="dashboard" dark="{{dark}}" hint-size="248px,1000px"></dc-import>
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 22px; padding: 28px 32px; box-sizing: border-box; min-width: 0">
+
+<header style="display: flex; align-items: center; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h1 style="margin: 0; font-size: 26px">SaaS ড্যাশবোর্ড</h1>
+<span style="font-size: 14px; color: {{t.muted}}">সব জিম একসাথে · সেপ্টেম্বর 2026</span>
+</div>
+<div style="display: flex; gap: 10px; align-items: center">
+<span style="font-size: 12px; padding: 4px 10px; border-radius: 999px; background: {{t.chip}}; color: {{t.muted}}">নমুনা ডেটা</span>
+<button style="height: 44px; padding: 0 18px; border-radius: 12px; border: none; background: {{accent}}; color: #0E0F12; font-weight: 600; font-size: 14px">+ নতুন জিম যোগ করুন</button>
+</div>
+</header>
+
+<section style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 14px; color: {{t.muted}}">{{k.label}}</span>
+<span class="num" style="font-size: 28px; font-weight: 700; line-height: 1; {{k.style}}">{{k.value}}</span>
+<span class="num" style="font-size: 12px; {{k.subStyle}}">{{k.sub}}</span>
+</div>
+</sc-for>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div style="grid-column: span 2; display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<h2 style="margin: 0; font-size: 17px">মাসিক রেকারিং আয় (MRR) · ১২ মাস</h2>
+<span class="num" style="font-size: 13px; color: {{t.success}}">+9% এই মাসে</span>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; height: 210px; border-bottom: 1px solid {{t.border}}">
+<sc-for list="{{mrr}}" as="m" hint-placeholder-count="12">
+<div style="width: 34px; border-radius: 6px 6px 0 0; {{m.style}}"></div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: {{t.muted}}"><span>অক্টো 2025</span><span>মার্চ 2026</span><span>সেপ্ট 2026</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 17px">প্ল্যান অনুযায়ী জিম</h2>
+<sc-for list="{{plans}}" as="p" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>{{p.name}}</span><span class="num" style="font-weight: 600">{{p.count}}</span></div>
+<div style="height: 8px; border-radius: 4px; background: {{t.chip}}"><div style="height: 8px; border-radius: 4px; {{p.bar}}"></div></div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-grow: 1; min-height: 0">
+<div style="grid-column: span 2; display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px">
+<h2 style="margin: 0; font-size: 17px">সাম্প্রতিক সাইনআপ</h2>
+<a href="SA-Gyms.dc.html" style="font-size: 14px; text-decoration: none; color: {{t.accentText}}">সব জিম</a>
+</div>
+<div style="display: grid; grid-template-columns: 2fr 1.2fr 1fr 1fr 1.2fr; gap: 12px; padding: 10px 20px; font-size: 13px; color: {{t.muted}}; background: {{t.chip}}">
+<span>জিম</span><span>শহর</span><span>প্ল্যান</span><span>মেম্বার</span><span>স্ট্যাটাস</span>
+</div>
+<sc-for list="{{signups}}" as="s" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: 2fr 1.2fr 1fr 1fr 1.2fr; gap: 12px; align-items: center; padding: 11px 20px; border-top: 1px solid {{t.border}}; font-size: 14px">
+<span style="font-weight: 600">{{s.name}}</span><span>{{s.city}}</span><span>{{s.plan}}</span><span class="num">{{s.members}}</span>
+<span><span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; {{s.badge}}">{{s.status}}</span></span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 17px">জরুরি বিষয়</h2>
+<sc-for list="{{alerts}}" as="a" hint-placeholder-count="4">
+<div style="display: flex; gap: 12px; align-items: flex-start; padding: 12px; border-radius: 12px; background: {{t.chip}}">
+<span style="width: 10px; height: 10px; border-radius: 5px; margin-top: 6px; flex-shrink: 0; {{a.dot}}"></span>
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">{{a.title}}</span><span style="font-size: 12px; color: {{t.muted}}">{{a.desc}}</span></span>
+</div>
+</sc-for>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', accentText: accent, success: '#4ADE80', warning: '#FBBF24', danger: '#F87171' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', accentText: '#3F6212', success: '#15803D', warning: '#B45309', danger: '#B91C1C' };
+    function badge(k) {
+      var m = dark ? { red: 'background: rgba(248,113,113,0.14); color: #F87171', amber: 'background: rgba(251,191,36,0.14); color: #FBBF24', green: 'background: rgba(74,222,128,0.14); color: #4ADE80', blue: 'background: rgba(56,189,248,0.14); color: #7DD3FC' }
+                   : { red: 'background: #FEE2E2; color: #991B1B', amber: 'background: #FEF3C7; color: #92400E', green: 'background: #DCFCE7; color: #166534', blue: 'background: #E0F2FE; color: #075985' };
+      return m[k];
+    }
+    var vals = [40, 46, 52, 58, 63, 70, 78, 86, 95, 104, 118, 130];
+    var mrr = vals.map(function (v, i) { return { style: 'height: ' + Math.round(v * 1.5) + 'px; background: ' + (i === vals.length - 1 ? accent : (dark ? '#3A3E47' : '#D4D8CF')) }; });
+    return {
+      t: t, dark: dark, accent: accent, mrr: mrr,
+      kpis: [
+        { label: 'মোট জিম', value: '48', sub: '+6 এই মাসে', style: '', subStyle: 'color: ' + t.success },
+        { label: 'MRR', value: '৳1,92,000', sub: '+9% গত মাসের চেয়ে', style: 'color: ' + accent, subStyle: 'color: ' + t.success },
+        { label: 'ট্রায়ালে', value: '9', sub: '3টি এই সপ্তাহে শেষ', style: 'color: #7DD3FC', subStyle: 'color: ' + t.muted },
+        { label: 'বকেয়া বিল', value: '4', sub: '৳16,000', style: 'color: ' + t.warning, subStyle: 'color: ' + t.muted },
+        { label: 'চলে গেছে (Churn)', value: '2', sub: 'এই মাসে · 4%', style: 'color: ' + t.danger, subStyle: 'color: ' + t.muted }
+      ],
+      plans: [
+        { name: 'স্টার্টার', count: '21', bar: 'width: 70%; background: ' + accent },
+        { name: 'গ্রোথ', count: '14', bar: 'width: 47%; background: ' + accent },
+        { name: 'প্রো', count: '4', bar: 'width: 14%; background: ' + accent },
+        { name: 'ট্রায়াল', count: '9', bar: 'width: 30%; background: #38BDF8' }
+      ],
+      signups: [
+        { name: 'আয়রন প্যারাডাইস', city: 'চট্টগ্রাম', plan: 'ট্রায়াল', members: '—', status: 'ট্রায়াল · ১২ দিন', badge: badge('blue') },
+        { name: 'ফিট জোন', city: 'ঢাকা', plan: 'গ্রোথ', members: '240', status: 'সক্রিয়', badge: badge('green') },
+        { name: 'বডি শেপ জিম', city: 'সিলেট', plan: 'স্টার্টার', members: '85', status: 'সক্রিয়', badge: badge('green') },
+        { name: 'মাসল ফ্যাক্টরি', city: 'ঢাকা', plan: 'স্টার্টার', members: '120', status: 'বিল বকেয়া', badge: badge('amber') }
+      ],
+      alerts: [
+        { title: '৪টি জিমের বিল বকেয়া', desc: '৭ দিনের বেশি · রিমাইন্ডার পাঠান', dot: 'background: ' + t.warning },
+        { title: '৩টি মেশিন অফলাইন', desc: '২টি জিমে · ১ ঘণ্টার বেশি', dot: 'background: ' + t.danger },
+        { title: '৫টি সাপোর্ট টিকেট খোলা', desc: '২টি জরুরি', dot: 'background: ' + t.danger },
+        { title: '৩টি ট্রায়াল এই সপ্তাহে শেষ', desc: 'কল করে কনভার্ট করুন', dot: 'background: #38BDF8' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

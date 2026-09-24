@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Payments – Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button,input,select{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; display: flex; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+<dc-import name="Sidebar" active="payments" dark="{{dark}}" hint-size="248px,1000px"></dc-import>
+<main style="flex-grow: 1; display: flex; gap: 20px; padding: 28px 32px; box-sizing: border-box; min-width: 0">
+
+<section style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+<header style="display: flex; align-items: center; justify-content: space-between">
+<h1 style="margin: 0; font-size: 26px">পেমেন্ট</h1>
+<div style="display: flex; gap: 6px; padding: 4px; border-radius: 12px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<button style="height: 36px; padding: 0 14px; border-radius: 9px; border: none; background: {{accent}}; color: #0E0F12; font-weight: 600; font-size: 14px">আজ</button>
+<button style="height: 36px; padding: 0 14px; border-radius: 9px; border: none; background: transparent; color: {{t.muted}}; font-size: 14px">এই সপ্তাহ</button>
+<button style="height: 36px; padding: 0 14px; border-radius: 9px; border: none; background: transparent; color: {{t.muted}}; font-size: 14px">এই মাস</button>
+</div>
+</header>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 14px; color: {{t.muted}}">আজকের কালেকশন</span>
+<span class="num" style="font-size: 30px; font-weight: 700; color: {{t.accentText}}">৳18,500</span>
+<span class="num" style="font-size: 13px; color: {{t.muted}}">14 টি পেমেন্ট</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 14px; color: {{t.muted}}">যাচাই বাকি</span>
+<span class="num" style="font-size: 30px; font-weight: 700; color: {{t.warning}}">3</span>
+<span style="font-size: 13px; color: {{t.muted}}">বিকাশ/নগদ ট্রানজেকশন</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 14px; color: {{t.muted}}">মোট বকেয়া</span>
+<span class="num" style="font-size: 30px; font-weight: 700">৳46,800</span>
+<span class="num" style="font-size: 13px; color: {{t.muted}}">12 জন মেম্বার</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden; flex-grow: 1">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px">
+<h2 style="margin: 0; font-size: 17px">আজকের ট্রানজেকশন</h2>
+<button style="height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font-size: 13px">PDF রিপোর্ট</button>
+</div>
+<div style="display: grid; grid-template-columns: 0.8fr 2fr 1.3fr 1fr 1fr 1.3fr 1.1fr; gap: 12px; padding: 10px 20px; font-size: 13px; color: {{t.muted}}; background: {{t.chip}}">
+<span>সময়</span><span>মেম্বার</span><span>প্যাকেজ</span><span>পরিমাণ</span><span>মাধ্যম</span><span>নিয়েছেন</span><span>স্ট্যাটাস</span>
+</div>
+<sc-for list="{{tx}}" as="x" hint-placeholder-count="8">
+<div style="display: grid; grid-template-columns: 0.8fr 2fr 1.3fr 1fr 1fr 1.3fr 1.1fr; gap: 12px; align-items: center; padding: 11px 20px; border-top: 1px solid {{t.border}}; font-size: 14px">
+<span class="num" style="color: {{t.muted}}">{{x.time}}</span>
+<span style="font-weight: 600">{{x.name}}</span>
+<span>{{x.pkg}}</span>
+<span class="num" style="font-weight: 600">{{x.amt}}</span>
+<span>{{x.method}}</span>
+<span style="color: {{t.muted}}">{{x.by}}</span>
+<span><span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; {{x.badge}}">{{x.status}}</span></span>
+</div>
+</sc-for>
+</div>
+</section>
+
+<aside style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; box-sizing: border-box">
+<h2 style="margin: 0; font-size: 20px">পেমেন্ট নিন</h2>
+
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px">মেম্বার
+<span style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid {{accent}}; background: {{t.bg}}">
+<span style="width: 30px; height: 30px; border-radius: 15px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px">র</span>
+<input aria-label="মেম্বার" value="রাফি আহমেদ · PH-0142" style="flex-grow: 1; border: none; outline: none; background: transparent; color: {{t.text}}; font-size: 14px">
+</span>
+</label>
+
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px">প্যাকেজ
+<select style="height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font-size: 14px"><option>মাসিক · ৳1,500</option><option>৩ মাস · ৳4,000</option><option>৬ মাস · ৳7,500</option></select>
+</label>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px">পরিমাণ
+<input class="num" value="1,500" style="height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font-size: 16px; font-weight: 600">
+</label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px">ছাড়
+<input class="num" value="0" style="height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font-size: 16px">
+</label>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+<span>পেমেন্ট মাধ্যম</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{methods}}" as="m" hint-placeholder-count="5">
+<button style="height: 44px; border-radius: 10px; font-size: 14px; cursor: pointer; {{m.style}}">{{m.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 14px">ট্রানজেকশন আইডি (বিকাশ)
+<input placeholder="যেমন: 8N7A6XXXXX" style="height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font-size: 14px">
+</label>
+
+<label style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: {{t.muted}}">
+<input type="checkbox" checked="checked" style="width: 18px; height: 18px">
+মেম্বারকে SMS ও হোয়াটসঅ্যাপে রিসিট পাঠান
+</label>
+
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px; padding-top: 16px; border-top: 1px solid {{t.border}}">
+<div style="display: flex; justify-content: space-between; font-size: 15px"><span style="color: {{t.muted}}">নতুন মেয়াদ</span><span class="num" style="font-weight: 600">24 Oct 2026</span></div>
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 15px; color: {{t.muted}}">মোট</span><span class="num" style="font-size: 28px; font-weight: 700; color: {{t.accentText}}">৳1,500</span></div>
+<button style="height: 52px; border-radius: 12px; border: none; background: {{accent}}; color: #0E0F12; font-weight: 700; font-size: 16px; cursor: pointer">পেমেন্ট নিশ্চিত করুন</button>
+</div>
+</aside>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', accentText: accent, success: '#4ADE80', warning: '#FBBF24' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', accentText: '#3F6212', success: '#15803D', warning: '#B45309' };
+    function badge(k) {
+      var m = dark ? { amber: 'background: rgba(251,191,36,0.14); color: #FBBF24', green: 'background: rgba(74,222,128,0.14); color: #4ADE80' }
+                   : { amber: 'background: #FEF3C7; color: #92400E', green: 'background: #DCFCE7; color: #166534' };
+      return m[k];
+    }
+    var mlist = ['ক্যাশ', 'বিকাশ', 'নগদ', 'রকেট', 'কার্ড'];
+    var methods = mlist.map(function (n, i) { return { label: n, style: i === 1 ? 'border: 2px solid ' + accent + '; background: ' + t.chip + '; color: ' + t.text + '; font-weight: 600' : 'border: 1px solid ' + t.border + '; background: ' + t.bg + '; color: ' + t.text }; });
+    var raw = [
+      ['9:12', 'নাদিয়া করিম', '৩ মাস', '৳4,000', 'বিকাশ', 'শিপা', 'amber', 'যাচাই বাকি'],
+      ['8:55', 'ফাহিম রহমান', 'মাসিক', '৳1,500', 'ক্যাশ', 'শিপা', 'green', 'সম্পন্ন'],
+      ['8:40', 'আসিফ ইকবাল', 'মাসিক', '৳1,500', 'নগদ', 'শিপা', 'amber', 'যাচাই বাকি'],
+      ['8:21', 'সাদিয়া আফরিন', '৬ মাস', '৳7,500', 'কার্ড', 'মালিক', 'green', 'সম্পন্ন'],
+      ['8:02', 'প্রোটিন শেক ×2', 'বিক্রি', '৳500', 'ক্যাশ', 'শিপা', 'green', 'সম্পন্ন'],
+      ['7:48', 'তানভীর আলম', 'মাসিক', '৳1,500', 'বিকাশ', 'শিপা', 'green', 'সম্পন্ন'],
+      ['7:30', 'রুমানা আক্তার', 'মাসিক', '৳1,500', 'বিকাশ', 'শিপা', 'amber', 'যাচাই বাকি'],
+      ['7:05', 'মেহেদী হাসান', 'মাসিক', '৳500', 'ক্যাশ', 'মালিক', 'green', 'সম্পন্ন']
+    ];
+    var tx = raw.map(function (r) { return { time: r[0], name: r[1], pkg: r[2], amt: r[3], method: r[4], by: r[5], badge: badge(r[6]), status: r[7] }; });
+    return { t: t, dark: dark, accent: accent, methods: methods, tx: tx };
+  }
+}
+</script>
+</body>
+</html>

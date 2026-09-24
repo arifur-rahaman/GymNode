@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Access Control – Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button,input{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; display: flex; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+<dc-import name="Sidebar" active="access" dark="{{dark}}" hint-size="248px,1000px"></dc-import>
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; padding: 28px 32px; box-sizing: border-box; min-width: 0">
+
+<header style="display: flex; align-items: center; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h1 style="margin: 0; font-size: 26px">অ্যাক্সেস কন্ট্রোল</h1>
+<span style="font-size: 14px; color: {{t.muted}}">দরজার মেশিন, লাইভ প্রবেশ ও অটো-লক নিয়ম</span>
+</div>
+<button style="height: 44px; padding: 0 18px; border-radius: 12px; border: none; background: {{accent}}; color: #0E0F12; font-weight: 600; font-size: 14px">+ মেশিন যোগ করুন</button>
+</header>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 14px; color: {{t.muted}}">{{k.label}}</span>
+<span class="num" style="font-size: 30px; font-weight: 700; {{k.style}}">{{k.value}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 20px; flex-grow: 1; min-height: 0">
+
+<section style="flex-grow: 1; display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden; min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px">
+<h2 style="margin: 0; font-size: 17px; display: flex; align-items: center; gap: 8px"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{t.success}}"></span>লাইভ প্রবেশ</h2>
+<span style="font-size: 13px; color: {{t.muted}}">রিয়েল-টাইমে আপডেট হয়</span>
+</div>
+<sc-for list="{{feed}}" as="f" hint-placeholder-count="9">
+<div style="display: flex; align-items: center; gap: 14px; padding: 12px 20px; border-top: 1px solid {{t.border}}">
+<span class="num" style="font-size: 13px; color: {{t.muted}}; width: 44px">{{f.time}}</span>
+<span style="width: 38px; height: 38px; border-radius: 19px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-weight: 700">{{f.initial}}</span>
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 15px; font-weight: 600">{{f.name}}</span><span style="font-size: 12px; color: {{t.muted}}">{{f.method}} · {{f.door}}</span></span>
+<span style="font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; {{f.badge}}">{{f.status}}</span>
+<sc-if value="{{f.blocked}}" hint-placeholder-val="{{false}}">
+<a href="Payments.dc.html" style="height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font-size: 13px; text-decoration: none; display: flex; align-items: center">পেমেন্ট নিন</a>
+</sc-if>
+</div>
+</sc-for>
+</section>
+
+<div style="width: 400px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px">
+<section style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 17px">মেশিন</h2>
+<sc-for list="{{devices}}" as="d" hint-placeholder-count="2">
+<div style="display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; background: {{t.chip}}">
+<span style="width: 42px; height: 42px; border-radius: 10px; background: {{t.bg}}; display: flex; align-items: center; justify-content: center; color: {{t.text}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"></rect><circle cx="12" cy="9" r="3"></circle><path d="M9 17h6"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 14px; font-weight: 600">{{d.name}}</span><span style="font-size: 12px; color: {{t.muted}}">{{d.model}} · {{d.sync}}</span></span>
+<span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; {{d.badge}}">{{d.status}}</span>
+</div>
+</sc-for>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; flex-grow: 1">
+<h2 style="margin: 0; font-size: 17px">অটো-লক নিয়ম</h2>
+<sc-for list="{{rules}}" as="r" hint-placeholder-count="4">
+<label style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">{{r.title}}</span><span style="font-size: 12px; color: {{t.muted}}">{{r.desc}}</span></span>
+<span style="width: 46px; height: 26px; border-radius: 13px; flex-shrink: 0; position: relative; {{r.track}}"><span style="position: absolute; top: 3px; width: 20px; height: 20px; border-radius: 10px; background: #FFFFFF; {{r.knob}}"></span></span>
+<input type="checkbox" aria-label="{{r.title}}" style="position: absolute; opacity: 0; width: 1px; height: 1px">
+</label>
+</sc-for>
+<label style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid {{t.border}}">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 14px; font-weight: 600">গ্রেস পিরিয়ড</span><span style="font-size: 12px; color: {{t.muted}}">মেয়াদ শেষের পর কত দিন ঢুকতে পারবে</span></span>
+<input class="num" value="0 দিন" style="width: 90px; height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font-size: 14px; text-align: center">
+</label>
+</section>
+</div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', success: '#4ADE80', warning: '#FBBF24', danger: '#F87171' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', success: '#15803D', warning: '#B45309', danger: '#B91C1C' };
+    function badge(k) {
+      var m = dark ? { red: 'background: rgba(248,113,113,0.14); color: #F87171', amber: 'background: rgba(251,191,36,0.14); color: #FBBF24', green: 'background: rgba(74,222,128,0.14); color: #4ADE80' }
+                   : { red: 'background: #FEE2E2; color: #991B1B', amber: 'background: #FEF3C7; color: #92400E', green: 'background: #DCFCE7; color: #166534' };
+      return m[k];
+    }
+    var raw = [
+      ['9:14', 'স', 'সাদিয়া আফরিন', 'ফেস আইডি', 0],
+      ['9:10', 'ত', 'তানভীর আলম', 'ফিঙ্গারপ্রিন্ট', 0],
+      ['9:02', 'ম', 'মেহেদী হাসান', 'ফেস আইডি', 1],
+      ['8:51', 'র', 'রুমানা আক্তার', 'RFID কার্ড', 0],
+      ['8:44', 'ন', 'নাদিয়া করিম', 'ফেস আইডি', 0],
+      ['7:38', 'ই', 'ইমরান হোসেন', 'ফিঙ্গারপ্রিন্ট', 1],
+      ['7:31', 'ফ', 'ফাহিম রহমান', 'ফেস আইডি', 0],
+      ['7:24', 'ম', 'মারিয়া সুলতানা', 'RFID কার্ড', 0],
+      ['7:15', 'আ', 'আসিফ ইকবাল', 'ফেস আইডি', 0]
+    ];
+    var feed = raw.map(function (r) { return { time: r[0], initial: r[1], name: r[2], method: r[3], door: 'মেইন গেট', blocked: !!r[4], status: r[4] ? 'মেয়াদ শেষ · আটকানো' : 'প্রবেশ অনুমোদিত', badge: badge(r[4] ? 'red' : 'green') }; });
+    function toggle(on) { return { track: 'background: ' + (on ? accent : (dark ? '#3A3E47' : '#D4D8CF')), knob: on ? 'left: 23px' : 'left: 3px' }; }
+    var ruleList = [
+      ['মেয়াদ শেষে অটো-লক', 'মেয়াদ শেষ হলে দরজা খুলবে না', true],
+      ['বকেয়া থাকলে সতর্কবার্তা', 'মেশিনে ও রিসেপশনে নোটিফিকেশন', true],
+      ['স্টাফ ওভাররাইড', 'বন্ধ থাকলে স্টাফ হাতে দরজা খুলতে পারবে না', false],
+      ['ইন্টারনেট ছাড়া অফলাইন মোড', 'মেশিন নিজের মেমোরি থেকে যাচাই করবে', true]
+    ];
+    var rules = ruleList.map(function (r) { var tg = toggle(r[2]); return { title: r[0], desc: r[1], track: tg.track, knob: tg.knob }; });
+    return {
+      t: t, dark: dark, accent: accent, feed: feed, rules: rules,
+      kpis: [
+        { label: 'আজ প্রবেশ', value: '46', style: '' },
+        { label: 'অনুমোদিত', value: '43', style: 'color: ' + t.success },
+        { label: 'আটকানো', value: '3', style: 'color: ' + t.danger },
+        { label: 'এখন জিমে', value: '18', style: 'color: ' + accent }
+      ],
+      devices: [
+        { name: 'মেইন গেট', model: 'ZKTeco SenseFace 2A', sync: '২ সেকেন্ড আগে সিঙ্ক', status: 'অনলাইন', badge: badge('green') },
+        { name: 'লেডিস জোন', model: 'ZKTeco SenseFace 2A', sync: 'অফলাইন মোডে চলছে', status: 'অফলাইন', badge: badge('amber') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

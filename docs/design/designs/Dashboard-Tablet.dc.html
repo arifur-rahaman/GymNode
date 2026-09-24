@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Dashboard – Tablet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button,input{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 834px; height: 1194px; display: flex; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+
+<aside style="width: 76px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 0; background: {{t.surface}}; border-right: 1px solid {{t.border}}">
+<div class="num" style="width: 40px; height: 40px; border-radius: 12px; background: #C6FF3D; color: #0E0F12; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; margin-bottom: 12px">G</div>
+<sc-for list="{{nav}}" as="n" hint-placeholder-count="10">
+<a href="#" aria-label="{{n.label}}" style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; {{n.style}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.d}}"></path></svg>
+</a>
+</sc-for>
+<div style="margin-top: auto; width: 40px; height: 40px; border-radius: 20px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-weight: 700">ম</div>
+</aside>
+
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; padding: 24px; box-sizing: border-box; min-width: 0">
+<header style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h1 style="margin: 0; font-size: 24px">ড্যাশবোর্ড</h1>
+<div style="font-size: 13px; color: {{t.muted}}">পাওয়ার হাউস জিম · ধানমন্ডি</div>
+</div>
+<div style="display: flex; gap: 10px">
+<button aria-label="খুঁজুন" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.surface}}; color: {{t.text}}; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+</button>
+<button style="height: 44px; padding: 0 16px; border-radius: 12px; border: none; background: {{accent}}; color: #0E0F12; font-weight: 600; font-size: 14px">+ নতুন মেম্বার</button>
+</div>
+</header>
+
+<section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="font-size: 14px; color: {{t.muted}}">{{k.label}}</div>
+<div class="num" style="font-size: 30px; font-weight: 700; line-height: 1; {{k.valStyle}}">{{k.value}}</div>
+<div class="num" style="font-size: 13px; {{k.subStyle}}">{{k.sub}}</div>
+</div>
+</sc-for>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 14px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<h2 style="margin: 0; font-size: 17px">আয় বনাম ব্যয় · ১৪ দিন</h2>
+<div style="display: flex; gap: 14px; font-size: 13px; color: {{t.muted}}">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{accent}}"></span>আয়</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #FF6B2C"></span>ব্যয়</span>
+</div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; height: 170px; border-bottom: 1px solid {{t.border}}">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="14">
+<div style="display: flex; align-items: flex-end; gap: 3px">
+<div style="width: 11px; border-radius: 3px 3px 0 0; background: {{accent}}; {{d.inc}}"></div>
+<div style="width: 11px; border-radius: 3px 3px 0 0; background: #FF6B2C; {{d.exp}}"></div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 18px">
+<h2 style="margin: 0; font-size: 17px">এই সপ্তাহে মেয়াদ শেষ</h2>
+<a href="#" style="font-size: 14px; text-decoration: none; color: {{t.accentText}}">সব দেখুন</a>
+</div>
+<sc-for list="{{expiring}}" as="r" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-top: 1px solid {{t.border}}">
+<span style="width: 38px; height: 38px; border-radius: 19px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-weight: 700">{{r.initial}}</span>
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 15px; font-weight: 600">{{r.name}}</span><span style="font-size: 12px; color: {{t.muted}}">{{r.pkg}} · বকেয়া <span class="num">{{r.due}}</span></span></span>
+<span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; {{r.badge}}">{{r.left}}</span>
+<button aria-label="হোয়াটসঅ্যাপ রিমাইন্ডার" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.success}}; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"></path></svg>
+</button>
+</div>
+</sc-for>
+</section>
+
+<section style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<div style="padding: 16px 18px"><h2 style="margin: 0; font-size: 17px; display: flex; align-items: center; gap: 8px"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{t.success}}"></span>লাইভ চেক-ইন</h2></div>
+<sc-for list="{{checkins}}" as="c" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 11px 18px; border-top: 1px solid {{t.border}}">
+<span class="num" style="font-size: 13px; color: {{t.muted}}; width: 40px">{{c.time}}</span>
+<span style="display: flex; flex-direction: column; flex-grow: 1"><span style="font-size: 14px; font-weight: 600">{{c.name}}</span><span style="font-size: 12px; color: {{t.muted}}">{{c.method}}</span></span>
+<span style="font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; {{c.badge}}">{{c.status}}</span>
+</div>
+</sc-for>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":834,"height":1194}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', accentText: accent, success: '#4ADE80', warning: '#FBBF24' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', accentText: '#3F6212', success: '#15803D', warning: '#B45309' };
+    function badge(k) {
+      var m = dark ? { red: 'background: rgba(248,113,113,0.14); color: #F87171', amber: 'background: rgba(251,191,36,0.14); color: #FBBF24', green: 'background: rgba(74,222,128,0.14); color: #4ADE80' }
+                   : { red: 'background: #FEE2E2; color: #991B1B', amber: 'background: #FEF3C7; color: #92400E', green: 'background: #DCFCE7; color: #166534' };
+      return m[k];
+    }
+    var icons = [
+      ['ড্যাশবোর্ড', 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z', true],
+      ['মেম্বার', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75'],
+      ['পেমেন্ট', 'M2 6h20v14H2zM2 10h20M16 15h2'],
+      ['প্যাকেজ', 'M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8'],
+      ['অ্যাক্সেস কন্ট্রোল', 'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4'],
+      ['ট্রেইনার ও স্টাফ', 'M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6M6 7v10M18 7v10'],
+      ['বিক্রি ও স্টক', 'M6 2L3 6v14h18V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0'],
+      ['রিপোর্ট', 'M18 20V10M12 20V4M6 20v-6'],
+      ['হোয়াটসঅ্যাপ ও SMS', 'M7.9 20A9 9 0 1 0 4 16.1L2 22z'],
+      ['সেটিংস', 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1']
+    ];
+    var nav = icons.map(function (x) { return { label: x[0], d: x[1], style: x[2] ? 'background: #C6FF3D; color: #0E0F12' : 'color: ' + t.muted }; });
+    var inc = [60, 72, 55, 80, 66, 90, 74, 58, 85, 70, 95, 78, 88, 100];
+    var exp = [30, 22, 40, 25, 35, 28, 45, 20, 32, 38, 26, 42, 30, 34];
+    var days = inc.map(function (v, i) { return { inc: 'height: ' + Math.round(v * 1.5) + 'px', exp: 'height: ' + Math.round(exp[i] * 1.5) + 'px' }; });
+    return {
+      t: t, accent: accent, nav: nav, days: days,
+      kpis: [
+        { label: 'আজকের কালেকশন', value: '৳18,500', sub: '+12% গতকালের চেয়ে', valStyle: 'color: ' + t.accentText, subStyle: 'color: ' + t.success },
+        { label: 'এই মাসের আয়', value: '৳3,42,000', sub: 'লক্ষ্যের 76%', valStyle: '', subStyle: 'color: ' + t.muted },
+        { label: 'সক্রিয় মেম্বার', value: '312', sub: '+18 এই মাসে', valStyle: '', subStyle: 'color: ' + t.success },
+        { label: 'মোট বকেয়া', value: '৳46,800', sub: '12 জন মেম্বার', valStyle: 'color: ' + t.warning, subStyle: 'color: ' + t.muted }
+      ],
+      expiring: [
+        { initial: 'র', name: 'রাফি আহমেদ', pkg: 'মাসিক', left: 'আজ', due: '৳1,500', badge: badge('red') },
+        { initial: 'ত', name: 'তানিয়া ইসলাম', pkg: '৩ মাস', left: '২ দিন', due: '৳0', badge: badge('amber') },
+        { initial: 'স', name: 'সাকিব হাসান', pkg: 'মাসিক', left: '৫ দিন', due: '৳800', badge: badge('amber') },
+        { initial: 'ন', name: 'নুসরাত জাহান', pkg: '৬ মাস', left: '৬ দিন', due: '৳0', badge: badge('amber') }
+      ],
+      checkins: [
+        { time: '7:42', name: 'নাদিয়া করিম', method: 'ফেস আইডি', status: 'অনুমোদিত', badge: badge('green') },
+        { time: '7:38', name: 'ইমরান হোসেন', method: 'ফিঙ্গারপ্রিন্ট', status: 'আটকানো', badge: badge('red') },
+        { time: '7:31', name: 'ফাহিম রহমান', method: 'ফেস আইডি', status: 'অনুমোদিত', badge: badge('green') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

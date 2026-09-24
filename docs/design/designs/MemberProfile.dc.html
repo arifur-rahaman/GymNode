@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Member Profile – Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; display: flex; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+<dc-import name="Sidebar" active="members" dark="{{dark}}" hint-size="248px,1000px"></dc-import>
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; padding: 28px 32px; box-sizing: border-box; min-width: 0">
+
+<div style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: {{t.muted}}">
+<a href="Members.dc.html" style="text-decoration: none; color: {{t.muted}}">মেম্বার</a><span>/</span><span style="color: {{t.text}}">রাফি আহমেদ</span>
+</div>
+
+<div style="display: flex; gap: 20px; flex-grow: 1; min-height: 0">
+
+<aside style="width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px; padding: 24px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; box-sizing: border-box">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+<div style="width: 96px; height: 96px; border-radius: 48px; background: {{t.chip}}; border: 3px solid {{accent}}; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 700">র</div>
+<div style="font-size: 22px; font-weight: 700">রাফি আহমেদ</div>
+<div class="num" style="font-size: 14px; color: {{t.muted}}">PH-0142 · 017•• •••421</div>
+<span style="font-size: 13px; font-weight: 600; padding: 4px 12px; border-radius: 999px; {{badgeAmber}}">বকেয়া ৳1,500</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 12px; background: {{t.chip}}">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: {{t.muted}}">প্যাকেজ</span><span style="font-weight: 600">মাসিক · ৳1,500</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span style="color: {{t.muted}}">মেয়াদ শেষ</span><span class="num" style="font-weight: 600; color: {{t.danger}}">আজ · 24 Sep</span></div>
+<div style="height: 8px; border-radius: 4px; background: {{t.border}}; margin-top: 4px"><div style="width: 100%; height: 8px; border-radius: 4px; background: {{t.danger}}"></div></div>
+<div class="num" style="font-size: 12px; color: {{t.muted}}">30 / 30 দিন ব্যবহৃত</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<button style="grid-column: span 2; height: 46px; border-radius: 12px; border: none; background: {{accent}}; color: #0E0F12; font-weight: 600; font-size: 15px; cursor: pointer">পেমেন্ট নিন ও রিনিউ</button>
+<button style="height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.success}}; font-size: 14px; cursor: pointer">হোয়াটসঅ্যাপ</button>
+<button style="height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.text}}; font-size: 14px; cursor: pointer">ফ্রিজ করুন</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px">
+<div style="font-weight: 600">তথ্য</div>
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">ভর্তি</span><span class="num">12 Jan 2026</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">ট্রেইনার</span><span>কামাল উদ্দিন</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">লকার</span><span class="num">L-17</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">ফেস আইডি</span><span style="color: {{t.success}}">যুক্ত আছে</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: {{t.muted}}">ফিঙ্গারপ্রিন্ট</span><span style="color: {{t.success}}">যুক্ত আছে</span></div>
+</div>
+</aside>
+
+<section style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px; min-width: 0">
+<div style="display: flex; gap: 6px; padding: 4px; border-radius: 12px; background: {{t.surface}}; border: 1px solid {{t.border}}; align-self: flex-start">
+<sc-for list="{{tabs}}" as="tb" hint-placeholder-count="5">
+<button style="height: 38px; padding: 0 16px; border-radius: 9px; border: none; font-size: 14px; cursor: pointer; {{tb.style}}">{{tb.label}}</button>
+</sc-for>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{stats}}" as="s" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 14px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 13px; color: {{t.muted}}">{{s.label}}</span>
+<span class="num" style="font-size: 24px; font-weight: 700">{{s.value}}</span>
+<span class="num" style="font-size: 12px; {{s.subStyle}}">{{s.sub}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<h2 style="margin: 0; font-size: 16px">উপস্থিতি · শেষ ৫ সপ্তাহ</h2>
+<span class="num" style="font-size: 13px; color: {{t.muted}}">22 দিন</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{heat}}" as="h" hint-placeholder-count="35">
+<div style="height: 30px; border-radius: 6px; {{h.style}}"></div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: {{t.muted}}"><span>শনি</span><span>রবি</span><span>সোম</span><span>মঙ্গল</span><span>বুধ</span><span>বৃহঃ</span><span>শুক্র</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 16px">ওজন · শেষ ৬ মাস</h2>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; height: 150px; border-bottom: 1px solid {{t.border}}; padding: 0 6px">
+<sc-for list="{{weight}}" as="w" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span class="num" style="font-size: 12px; color: {{t.muted}}">{{w.kg}}</span>
+<div style="width: 34px; border-radius: 6px 6px 0 0; {{w.style}}"></div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: {{t.muted}}; padding: 0 6px"><span>এপ্রি</span><span>মে</span><span>জুন</span><span>জুলা</span><span>আগ</span><span>সেপ্ট</span></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden; flex-grow: 1">
+<div style="padding: 16px 20px"><h2 style="margin: 0; font-size: 16px">পেমেন্ট হিস্ট্রি</h2></div>
+<div style="display: grid; grid-template-columns: 1.2fr 1.3fr 1fr 1fr 1.2fr 1fr; gap: 12px; padding: 10px 20px; font-size: 13px; color: {{t.muted}}; background: {{t.chip}}">
+<span>তারিখ</span><span>ইনভয়েস</span><span>পরিমাণ</span><span>মাধ্যম</span><span>নিয়েছেন</span><span>রিসিট</span>
+</div>
+<sc-for list="{{payments}}" as="p" hint-placeholder-count="3">
+<div style="display: grid; grid-template-columns: 1.2fr 1.3fr 1fr 1fr 1.2fr 1fr; gap: 12px; align-items: center; padding: 11px 20px; border-top: 1px solid {{t.border}}; font-size: 14px">
+<span class="num">{{p.date}}</span><span class="num" style="color: {{t.muted}}">{{p.inv}}</span><span class="num" style="font-weight: 600">{{p.amt}}</span><span>{{p.method}}</span><span>{{p.by}}</span><span style="color: {{t.success}}">SMS পাঠানো</span>
+</div>
+</sc-for>
+</div>
+</section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', success: '#4ADE80', warning: '#FBBF24', danger: '#F87171' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', success: '#15803D', warning: '#B45309', danger: '#B91C1C' };
+    var tabNames = ['ওভারভিউ', 'পেমেন্ট', 'উপস্থিতি', 'বডি ট্র্যাকিং', 'রুটিন ও ডায়েট'];
+    var tabs = tabNames.map(function (n, i) { return { label: n, style: i === 0 ? 'background: ' + accent + '; color: #0E0F12; font-weight: 600' : 'background: transparent; color: ' + t.muted }; });
+    var pattern = [1,0,1,1,0,1,0, 1,1,0,1,1,0,0, 1,0,1,1,1,0,0, 1,1,1,0,1,0,0, 1,0,1,1,0,0,0];
+    var on = dark ? 'rgba(198,255,61,0.85)' : '#65A30D';
+    var off = dark ? '#23262D' : '#EEF0EA';
+    var heat = pattern.map(function (v) { return { style: 'background: ' + (v ? on : off) }; });
+    var kg = [84, 82.5, 81, 80.2, 79, 78.4];
+    var weight = kg.map(function (k, i) { return { kg: k, style: 'height: ' + Math.round((k - 70) * 8) + 'px; background: ' + (i === kg.length - 1 ? accent : (dark ? '#3A3E47' : '#D4D8CF')) }; });
+    return {
+      t: t, dark: dark, accent: accent, tabs: tabs, heat: heat, weight: weight,
+      badgeAmber: dark ? 'background: rgba(251,191,36,0.14); color: #FBBF24' : 'background: #FEF3C7; color: #92400E',
+      stats: [
+        { label: 'এই মাসে উপস্থিতি', value: '16 দিন', sub: '+3 গত মাসের চেয়ে', subStyle: 'color: ' + t.success },
+        { label: 'বর্তমান ওজন', value: '78.4 kg', sub: '−5.6 kg ৬ মাসে', subStyle: 'color: ' + t.success },
+        { label: 'BMI', value: '24.1', sub: 'স্বাভাবিক', subStyle: 'color: ' + t.muted },
+        { label: 'মোট পরিশোধ', value: '৳12,000', sub: 'ভর্তির পর থেকে', subStyle: 'color: ' + t.muted }
+      ],
+      payments: [
+        { date: '24 Aug 2026', inv: 'INV-2026-0831', amt: '৳1,500', method: 'বিকাশ', by: 'শিপা (রিসেপশন)' },
+        { date: '24 Jul 2026', inv: 'INV-2026-0712', amt: '৳1,500', method: 'ক্যাশ', by: 'শিপা (রিসেপশন)' },
+        { date: '24 Jun 2026', inv: 'INV-2026-0598', amt: '৳1,500', method: 'নগদ', by: 'মালিক' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

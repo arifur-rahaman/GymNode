@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Reports – Desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; display: flex; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+<dc-import name="Sidebar" active="reports" dark="{{dark}}" hint-size="248px,1000px"></dc-import>
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; padding: 28px 32px; box-sizing: border-box; min-width: 0">
+
+<header style="display: flex; align-items: center; justify-content: space-between">
+<h1 style="margin: 0; font-size: 26px">রিপোর্ট</h1>
+<div style="display: flex; gap: 10px; align-items: center">
+<div style="display: flex; gap: 6px; padding: 4px; border-radius: 12px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<sc-for list="{{ranges}}" as="r" hint-placeholder-count="4">
+<button style="height: 36px; padding: 0 14px; border-radius: 9px; border: none; font-size: 14px; cursor: pointer; {{r.style}}">{{r.label}}</button>
+</sc-for>
+</div>
+<button style="height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.surface}}; color: {{t.text}}; font-size: 14px">PDF</button>
+<button style="height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.surface}}; color: {{t.text}}; font-size: 14px">Excel</button>
+</div>
+</header>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 14px; color: {{t.muted}}">{{k.label}}</span>
+<span class="num" style="font-size: 30px; font-weight: 700; {{k.style}}">{{k.value}}</span>
+<span class="num" style="font-size: 13px; {{k.subStyle}}">{{k.sub}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div style="grid-column: span 2; display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<h2 style="margin: 0; font-size: 17px">মাসিক আয়, ব্যয় ও লাভ</h2>
+<div style="display: flex; gap: 14px; font-size: 13px; color: {{t.muted}}">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{accent}}"></span>আয়</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #FF6B2C"></span>ব্যয়</span>
+</div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-around; height: 230px; border-bottom: 1px solid {{t.border}}">
+<sc-for list="{{months}}" as="m" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span class="num" style="font-size: 12px; color: {{t.success}}">{{m.profit}}</span>
+<div style="display: flex; align-items: flex-end; gap: 6px">
+<div style="width: 28px; border-radius: 5px 5px 0 0; background: {{accent}}; {{m.inc}}"></div>
+<div style="width: 28px; border-radius: 5px 5px 0 0; background: #FF6B2C; {{m.exp}}"></div>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-around; font-size: 13px; color: {{t.muted}}"><span>এপ্রি</span><span>মে</span><span>জুন</span><span>জুলা</span><span>আগ</span><span>সেপ্ট</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 17px">ব্যয়ের খাত · এই মাস</h2>
+<sc-for list="{{expenses}}" as="e" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>{{e.name}}</span><span class="num" style="font-weight: 600">{{e.amt}}</span></div>
+<div style="height: 8px; border-radius: 4px; background: {{t.chip}}"><div style="height: 8px; border-radius: 4px; background: #FF6B2C; {{e.bar}}"></div></div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-grow: 1; min-height: 0">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 17px">নতুন বনাম মেয়াদ শেষ</h2>
+<div style="display: flex; align-items: flex-end; justify-content: space-around; flex-grow: 1; border-bottom: 1px solid {{t.border}}">
+<sc-for list="{{members}}" as="m" hint-placeholder-count="6">
+<div style="display: flex; align-items: flex-end; gap: 3px">
+<div style="width: 12px; border-radius: 3px 3px 0 0; background: {{t.success}}; {{m.n}}"></div>
+<div style="width: 12px; border-radius: 3px 3px 0 0; background: {{t.danger}}; {{m.x}}"></div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 14px; font-size: 13px; color: {{t.muted}}">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{t.success}}"></span>নতুন</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{t.danger}}"></span>মেয়াদ শেষ</span>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 17px">জনপ্রিয় প্যাকেজ</h2>
+<sc-for list="{{packages}}" as="p" hint-placeholder-count="3">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid {{t.border}}; font-size: 14px">
+<span>{{p.name}}</span><span class="num" style="font-weight: 600">{{p.count}}</span>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<h2 style="margin: 0; font-size: 17px">ব্যস্ত সময়</h2>
+<sc-for list="{{peaks}}" as="p" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 14px">
+<span class="num" style="width: 90px; color: {{t.muted}}">{{p.slot}}</span>
+<div style="flex-grow: 1; height: 10px; border-radius: 5px; background: {{t.chip}}"><div style="height: 10px; border-radius: 5px; background: {{accent}}; {{p.bar}}"></div></div>
+</div>
+</sc-for>
+</div>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', success: '#4ADE80', warning: '#FBBF24', danger: '#F87171' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', success: '#15803D', warning: '#B45309', danger: '#B91C1C' };
+    var rl = ['এই মাস', '৩ মাস', '৬ মাস', 'কাস্টম'];
+    var ranges = rl.map(function (n, i) { return { label: n, style: i === 2 ? 'background: ' + accent + '; color: #0E0F12; font-weight: 600' : 'background: transparent; color: ' + t.muted }; });
+    var inc = [2.8, 3.0, 2.9, 3.2, 3.3, 3.42];
+    var exp = [1.4, 1.5, 1.6, 1.5, 1.7, 1.62];
+    var months = inc.map(function (v, i) { return { inc: 'height: ' + Math.round(v * 55) + 'px', exp: 'height: ' + Math.round(exp[i] * 55) + 'px', profit: '৳' + (v - exp[i]).toFixed(2) + 'L' }; });
+    var nn = [22, 18, 25, 20, 28, 18];
+    var xx = [10, 14, 9, 12, 11, 24];
+    var members = nn.map(function (v, i) { return { n: 'height: ' + v * 4 + 'px', x: 'height: ' + xx[i] * 4 + 'px' }; });
+    return {
+      t: t, dark: dark, accent: accent, ranges: ranges, months: months, members: members,
+      kpis: [
+        { label: 'মোট আয় · ৬ মাস', value: '৳18.62L', sub: '+14% আগের ৬ মাসের চেয়ে', style: 'color: ' + accent, subStyle: 'color: ' + t.success },
+        { label: 'মোট ব্যয়', value: '৳9.32L', sub: 'ভাড়া, বেতন, বিদ্যুৎ', style: '', subStyle: 'color: ' + t.muted },
+        { label: 'নিট লাভ', value: '৳9.30L', sub: 'মার্জিন 50%', style: 'color: ' + t.success, subStyle: 'color: ' + t.muted },
+        { label: 'রিনিউ হার', value: '78%', sub: 'মেয়াদ শেষে যারা রিনিউ করেছে', style: '', subStyle: 'color: ' + t.muted }
+      ],
+      expenses: [
+        { name: 'ভাড়া', amt: '৳60,000', bar: 'width: 90%' },
+        { name: 'স্টাফ বেতন', amt: '৳55,000', bar: 'width: 82%' },
+        { name: 'বিদ্যুৎ', amt: '৳22,000', bar: 'width: 33%' },
+        { name: 'সাপ্লিমেন্ট স্টক', amt: '৳15,000', bar: 'width: 22%' },
+        { name: 'রক্ষণাবেক্ষণ', amt: '৳10,000', bar: 'width: 15%' }
+      ],
+      packages: [
+        { name: 'মাসিক', count: '198 জন' },
+        { name: '৩ মাস', count: '76 জন' },
+        { name: '৬ মাস', count: '38 জন' }
+      ],
+      peaks: [
+        { slot: '6–8 AM', bar: 'width: 92%' },
+        { slot: '8–10 AM', bar: 'width: 55%' },
+        { slot: '5–7 PM', bar: 'width: 100%' },
+        { slot: '7–9 PM', bar: 'width: 74%' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

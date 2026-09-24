@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Super Admin Sidebar</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<aside style="width: 248px; height: 1000px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px; padding: 20px 14px; background: {{t.surface}}; border-right: 1px solid {{t.border}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<div style="width: 36px; height: 36px; border-radius: 10px; background: #C6FF3D; color: #0E0F12; display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px">G</div>
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 15px; font-weight: 700">[প্রোডাক্টের নাম]</span>
+<span style="font-size: 11px; font-weight: 600; color: #FF8A4C; letter-spacing: 0.04em">SUPER ADMIN</span>
+</div>
+</div>
+<nav style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<sc-for list="{{items}}" as="it" hint-placeholder-count="10">
+<a href="#" style="display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px; border-radius: 10px; text-decoration: none; font-size: 14px; {{it.style}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{it.d}}"></path></svg>
+<span style="flex-grow: 1">{{it.label}}</span>
+<sc-if value="{{it.hasCount}}" hint-placeholder-val="{{false}}">
+<span style="font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: rgba(248,113,113,0.16); color: {{t.danger}}">{{it.count}}</span>
+</sc-if>
+</a>
+</sc-for>
+</nav>
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 6px">
+<div style="width: 36px; height: 36px; border-radius: 18px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-weight: 700">অ</div>
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 14px; font-weight: 600">অ্যাডমিন</span>
+<span style="font-size: 12px; color: {{t.muted}}">ফাউন্ডার</span>
+</div>
+</div>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["dashboard","gyms","billing","plans","devices","messages","support","onboarding","team","settings"],"default":"dashboard"},"dark":{"editor":"boolean","default":true},"$preview":{"width":248,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var active = this.props.active ?? 'dashboard';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', danger: '#F87171' }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', danger: '#B91C1C' };
+    var list = [
+      ['dashboard', 'ড্যাশবোর্ড', 'M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z'],
+      ['gyms', 'জিম', 'M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6'],
+      ['billing', 'সাবস্ক্রিপশন ও বিলিং', 'M2 6h20v14H2zM2 10h20M16 15h2', '4'],
+      ['plans', 'প্ল্যান', 'M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8'],
+      ['devices', 'মেশিন মনিটরিং', 'M6 2h12v20H6zM12 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM9 17h6', '3'],
+      ['messages', 'SMS ও হোয়াটসঅ্যাপ', 'M7.9 20A9 9 0 1 0 4 16.1L2 22z'],
+      ['support', 'সাপোর্ট', 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01', '5'],
+      ['onboarding', 'অনবোর্ডিং', 'M5 12l5 5L20 7'],
+      ['team', 'টিম', 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
+      ['settings', 'সেটিংস', 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1']
+    ];
+    var items = list.map(function (x) {
+      var on = x[0] === active;
+      return { label: x[1], d: x[2], hasCount: !!x[3], count: x[3] || '', style: on ? 'background: #C6FF3D; color: #0E0F12; font-weight: 600' : 'color: ' + t.muted };
+    });
+    return { t: t, items: items };
+  }
+}
+</script>
+</body>
+</html>

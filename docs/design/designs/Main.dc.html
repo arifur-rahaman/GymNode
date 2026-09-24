@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Owner Home – Iron &amp; Volt</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit;cursor:pointer}
+.num{font-family:'Space Grotesk','Hind Siliguri',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1240px; box-sizing: border-box; display: flex; flex-direction: column; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+
+<div style="display: flex; flex-direction: column; gap: 20px; padding: 20px 20px 24px 20px; flex-grow: 1">
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; align-items: center; gap: 12px">
+<div class="num" style="width: 44px; height: 44px; border-radius: 12px; background: {{accent}}; color: #0E0F12; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px">PH</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 13px; color: {{t.muted}}">শুভ সকাল · বৃহস্পতিবার, ২৪ সেপ্টেম্বর</div>
+<div style="font-size: 18px; font-weight: 700">পাওয়ার হাউস জিম</div>
+</div>
+</div>
+<button aria-label="নোটিফিকেশন" style="position: relative; width: 44px; height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.surface}}; color: {{t.text}}; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+<span style="position: absolute; top: 9px; right: 10px; width: 8px; height: 8px; border-radius: 4px; background: #FF6B2C"></span>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="font-size: 14px; color: {{t.muted}}">আজকের কালেকশন</div>
+<div style="font-size: 12px; padding: 4px 10px; border-radius: 999px; background: {{t.chip}}; color: {{t.muted}}">নমুনা ডেটা</div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div class="num" style="font-size: 44px; line-height: 1; font-weight: 700; color: {{t.accentText}}">৳18,500</div>
+<div class="num" style="font-size: 13px; color: {{t.success}}">+12% গতকালের চেয়ে</div>
+</div>
+<div style="display: flex; align-items: flex-end; gap: 5px; height: 56px">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="7">
+<div style="width: 10px; border-radius: 3px; {{b.style}}"></div>
+</sc-for>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 10px; border-radius: 10px; background: {{t.chip}}">
+<div style="font-size: 12px; color: {{t.muted}}">ক্যাশ</div>
+<div class="num" style="font-size: 15px; font-weight: 600">৳8,000</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 10px; border-radius: 10px; background: {{t.chip}}">
+<div style="font-size: 12px; color: {{t.muted}}">বিকাশ</div>
+<div class="num" style="font-size: 15px; font-weight: 600">৳7,500</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 10px; border-radius: 10px; background: {{t.chip}}">
+<div style="font-size: 12px; color: {{t.muted}}">নগদ</div>
+<div class="num" style="font-size: 15px; font-weight: 600">৳3,000</div>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<a href="#" style="text-decoration: none; color: {{t.text}}; display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; border-radius: 14px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div class="num" style="font-size: 26px; font-weight: 700; color: {{t.warning}}">12</div>
+<div style="font-size: 13px; line-height: 1.3">বকেয়া আছে</div>
+</a>
+<a href="#" style="text-decoration: none; color: {{t.text}}; display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; border-radius: 14px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div class="num" style="font-size: 26px; font-weight: 700; color: {{t.orange}}">8</div>
+<div style="font-size: 13px; line-height: 1.3">৭ দিনে মেয়াদ শেষ</div>
+</a>
+<a href="#" style="text-decoration: none; color: {{t.text}}; display: flex; flex-direction: column; gap: 6px; padding: 14px 12px; border-radius: 14px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div class="num" style="font-size: 26px; font-weight: 700; color: {{t.success}}">46</div>
+<div style="font-size: 13px; line-height: 1.3">আজ চেক-ইন</div>
+</a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+<button style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 4px; border-radius: 14px; border: none; background: {{accent}}; color: #0E0F12">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+<span style="font-size: 12px; font-weight: 600">নতুন মেম্বার</span>
+</button>
+<button style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 4px; border-radius: 14px; border: 1px solid {{t.border}}; background: {{t.surface}}; color: {{t.text}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path><path d="M16 15h2"></path></svg>
+<span style="font-size: 12px; font-weight: 600">পেমেন্ট নিন</span>
+</button>
+<button style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 4px; border-radius: 14px; border: 1px solid {{t.border}}; background: {{t.surface}}; color: {{t.text}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+<span style="font-size: 12px; font-weight: 600">বিক্রি</span>
+</button>
+<button style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 4px; border-radius: 14px; border: 1px solid {{t.border}}; background: {{t.surface}}; color: {{t.text}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><path d="M14 14h3v3h-3z"></path><path d="M20 14v7h-6"></path></svg>
+<span style="font-size: 12px; font-weight: 600">QR ভর্তি</span>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="font-size: 17px; font-weight: 700">এই সপ্তাহে মেয়াদ শেষ</div>
+<a href="#" style="font-size: 13px; text-decoration: none; color: {{t.accentText}}">সব দেখুন</a>
+</div>
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<sc-for list="{{expiring}}" as="m" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid {{t.border}}">
+<div style="width: 40px; height: 40px; border-radius: 20px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px">{{m.initial}}</div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<div style="font-size: 15px; font-weight: 600">{{m.name}}</div>
+<div style="font-size: 12px; color: {{t.muted}}">{{m.pkg}}</div>
+</div>
+<div style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; {{m.badgeStyle}}">{{m.left}}</div>
+<button aria-label="হোয়াটসঅ্যাপে রিমাইন্ডার পাঠান" style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid {{t.border}}; background: {{t.bg}}; color: {{t.success}}; display: flex; align-items: center; justify-content: center; padding: 0">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"></path></svg>
+</button>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="width: 8px; height: 8px; border-radius: 4px; background: {{t.success}}"></span>
+<div style="font-size: 17px; font-weight: 700">লাইভ চেক-ইন</div>
+</div>
+<a href="#" style="font-size: 13px; text-decoration: none; color: {{t.accentText}}">সব দেখুন</a>
+</div>
+<div style="display: flex; flex-direction: column; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.border}}; overflow: hidden">
+<sc-for list="{{checkins}}" as="c" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid {{t.border}}">
+<div class="num" style="font-size: 13px; color: {{t.muted}}; width: 44px">{{c.time}}</div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<div style="font-size: 15px; font-weight: 600">{{c.name}}</div>
+<div style="font-size: 12px; color: {{t.muted}}">{{c.method}}</div>
+</div>
+<div style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; {{c.badgeStyle}}">{{c.status}}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+</div>
+
+<nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 10px 8px 18px 8px; background: {{t.surface}}; border-top: 1px solid {{t.border}}">
+<a href="#" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 48px; justify-content: center; color: {{t.accentText}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+<span style="font-size: 11px; font-weight: 600">হোম</span>
+</a>
+<a href="#" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 48px; justify-content: center; color: {{t.muted}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+<span style="font-size: 11px">মেম্বার</span>
+</a>
+<a href="#" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 48px; justify-content: center; color: {{t.muted}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4z"></path></svg>
+<span style="font-size: 11px">হিসাব</span>
+</a>
+<a href="#" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 48px; justify-content: center; color: {{t.muted}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+<span style="font-size: 11px">রিপোর্ট</span>
+</a>
+<a href="#" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 48px; justify-content: center; color: {{t.muted}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+<span style="font-size: 11px">সেটিংস</span>
+</a>
+</nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":390,"height":1240}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? {
+      bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D',
+      text: '#F4F4F5', muted: '#A1A7B0', accentText: accent,
+      success: '#4ADE80', warning: '#FBBF24', orange: '#FF8A4C', danger: '#F87171'
+    } : {
+      bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA',
+      text: '#111214', muted: '#555B64', accentText: '#3F6212',
+      success: '#15803D', warning: '#B45309', orange: '#C2410C', danger: '#B91C1C'
+    };
+    var heights = [22, 30, 26, 38, 34, 44, 56];
+    var bars = heights.map(function (h, i) {
+      var c = i === heights.length - 1 ? accent : (dark ? '#3A3E47' : '#D4D8CF');
+      return { style: 'height: ' + h + 'px; background: ' + c };
+    });
+    function badge(kind) {
+      var map = dark ? {
+        red: 'background: rgba(248,113,113,0.14); color: #F87171',
+        amber: 'background: rgba(251,191,36,0.14); color: #FBBF24',
+        green: 'background: rgba(74,222,128,0.14); color: #4ADE80'
+      } : {
+        red: 'background: #FEE2E2; color: #991B1B',
+        amber: 'background: #FEF3C7; color: #92400E',
+        green: 'background: #DCFCE7; color: #166534'
+      };
+      return map[kind];
+    }
+    return {
+      t: t,
+      accent: accent,
+      bars: bars,
+      expiring: [
+        { initial: 'র', name: 'রাফি আহমেদ', pkg: 'মাসিক প্যাকেজ', left: 'আজ', badgeStyle: badge('red') },
+        { initial: 'ত', name: 'তানিয়া ইসলাম', pkg: '৩ মাসের প্যাকেজ', left: '২ দিন', badgeStyle: badge('amber') },
+        { initial: 'স', name: 'সাকিব হাসান', pkg: 'মাসিক প্যাকেজ', left: '৫ দিন', badgeStyle: badge('amber') }
+      ],
+      checkins: [
+        { time: '7:42', name: 'নাদিয়া করিম', method: 'ফেস আইডি', status: 'প্রবেশ অনুমোদিত', badgeStyle: badge('green') },
+        { time: '7:38', name: 'ইমরান হোসেন', method: 'ফিঙ্গারপ্রিন্ট', status: 'মেয়াদ শেষ · আটকানো', badgeStyle: badge('red') },
+        { time: '7:31', name: 'ফাহিম রহমান', method: 'ফেস আইডি', status: 'প্রবেশ অনুমোদিত', badgeStyle: badge('green') }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

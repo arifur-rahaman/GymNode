@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>Member App – Workout</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Hind+Siliguri:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0E0F12}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit}
+.num{font-family:'Space Grotesk','Hind Siliguri',sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1020px; display: flex; flex-direction: column; background: {{t.bg}}; color: {{t.text}}; font-family: 'Hind Siliguri', 'Space Grotesk', system-ui, sans-serif; overflow: hidden">
+<main style="display: flex; flex-direction: column; gap: 16px; padding: 20px; flex-grow: 1">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h1 style="margin: 0; font-size: 22px">ওয়ার্কআউট</h1>
+<span style="font-size: 13px; color: {{t.muted}}">ট্রেইনার কামাল উদ্দিনের দেওয়া রুটিন</span>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+<button style="height: 60px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; {{d.style}}">
+<span style="font-size: 11px">{{d.day}}</span><span class="num" style="font-size: 15px; font-weight: 700">{{d.date}}</span>
+</button>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 18px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<span style="font-size: 18px; font-weight: 700">বুক ও ট্রাইসেপ</span>
+<span class="num" style="font-size: 14px; color: {{t.muted}}">6 এক্সারসাইজ · 22 সেট · ~50 মিনিট</span>
+<div style="height: 8px; border-radius: 4px; background: {{t.chip}}; margin-top: 8px"><div style="width: 33%; height: 8px; border-radius: 4px; background: {{accent}}"></div></div>
+<span class="num" style="font-size: 12px; color: {{t.muted}}">2 / 6 সম্পন্ন</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{exercises}}" as="e" hint-placeholder-count="6">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; background: {{t.surface}}; border: 1px solid {{t.border}}">
+<div style="width: 56px; height: 56px; border-radius: 12px; background: {{t.chip}}; display: flex; align-items: center; justify-content: center; font-size: 11px; color: {{t.muted}}; text-align: center">ছবি</div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<span style="font-size: 15px; font-weight: 600">{{e.name}}</span>
+<span class="num" style="font-size: 13px; color: {{t.muted}}">{{e.sets}}</span>
+</div>
+<span style="width: 28px; height: 28px; border-radius: 14px; display: flex; align-items: center; justify-content: center; {{e.checkStyle}}">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg>
+</span>
+</div>
+</sc-for>
+</div>
+
+<button style="margin-top: auto; height: 52px; border-radius: 14px; border: none; background: {{accent}}; color: #0E0F12; font-weight: 700; font-size: 16px; cursor: pointer">পরের এক্সারসাইজ শুরু করুন</button>
+</main>
+
+<nav style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 8px 6px 18px 6px; background: {{t.surface}}; border-top: 1px solid {{t.border}}">
+<sc-for list="{{tabs}}" as="n" hint-placeholder-count="5">
+<a href="{{n.href}}" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 48px; {{n.style}}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{n.d}}"></path></svg>
+<span style="font-size: 11px">{{n.label}}</span>
+</a>
+</sc-for>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":true},"accent":{"editor":"color","default":"#C6FF3D","options":["#C6FF3D","#FF6B2C","#38BDF8"]},"$preview":{"width":390,"height":1020}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = this.props.dark ?? true;
+    var accent = this.props.accent ?? '#C6FF3D';
+    var t = dark ? { bg: '#0E0F12', surface: '#1A1C21', border: '#2A2D34', chip: '#23262D', text: '#F4F4F5', muted: '#A1A7B0', accentText: accent }
+                 : { bg: '#F4F5F1', surface: '#FFFFFF', border: '#E2E4DE', chip: '#EEF0EA', text: '#111214', muted: '#555B64', accentText: '#3F6212' };
+    var days = [['শনি', '20'], ['রবি', '21'], ['সোম', '22'], ['মঙ্গল', '23'], ['বুধ', '24'], ['বৃহঃ', '25'], ['শুক্র', '26']];
+    var week = days.map(function (d, i) { return { day: d[0], date: d[1], style: i === 4 ? 'border: none; background: ' + accent + '; color: #0E0F12' : 'border: 1px solid ' + t.border + '; background: ' + t.surface + '; color: ' + t.text }; });
+    var ex = [
+      ['বেঞ্চ প্রেস', '4 সেট × 10 রেপ · 40 kg', 1],
+      ['ইনক্লাইন ডাম্বেল প্রেস', '4 সেট × 12 রেপ · 14 kg', 1],
+      ['কেবল ফ্লাই', '3 সেট × 15 রেপ', 0],
+      ['পুশ-আপ', '3 সেট × 20 রেপ', 0],
+      ['ট্রাইসেপ পুশডাউন', '4 সেট × 12 রেপ', 0],
+      ['ওভারহেড এক্সটেনশন', '4 সেট × 12 রেপ', 0]
+    ];
+    var exercises = ex.map(function (e) { return { name: e[0], sets: e[1], checkStyle: e[2] ? 'background: ' + accent + '; color: #0E0F12' : 'border: 2px solid ' + t.border + '; color: transparent' }; });
+    var active = 'workout';
+    var list = [
+      ['home', 'হোম', 'M-Home.dc.html', 'm3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10'],
+      ['workout', 'ওয়ার্কআউট', 'M-Workout.dc.html', 'M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6M6 7v10M18 7v10'],
+      ['diet', 'ডায়েট', 'M-Diet.dc.html', 'M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zM21 15v7'],
+      ['progress', 'প্রোগ্রেস', 'M-Progress.dc.html', 'M3 3v18h18M7 14l4-4 4 4 5-6'],
+      ['membership', 'মেম্বারশিপ', 'M-Membership.dc.html', 'M2 6h20v14H2zM2 10h20M16 15h2']
+    ];
+    var tabs = list.map(function (x) { var on = x[0] === active; return { label: x[1], href: x[2], d: x[3], style: 'color: ' + (on ? t.accentText : t.muted) + (on ? '; font-weight: 600' : '') }; });
+    return { t: t, accent: accent, week: week, exercises: exercises, tabs: tabs };
+  }
+}
+</script>
+</body>
+</html>
