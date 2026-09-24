@@ -1,0 +1,7 @@
+{
+  "extends": "@gymnode/config/tsconfig.base.json",
+  "compilerOptions": {
+    "types": []
+  },
+  "include": ["src"]
+}
