@@ -1,6 +1,6 @@
 # GymNode — Build Plan (Phase 1: Web)
 
-> Status: **M2 done (25 Sep 2026). Next: M3 (payments & dues), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
+> Status: **M3 done (25 Sep 2026). Next: M4 (dashboard), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
 > Sources: `docs/design/CLAUDE_CODE_PROMPT.md` (the brief), `docs/design/DESIGN_SYSTEM.md`, `docs/design/tokens.css`, `docs/design/designs/*.dc.html`.
 > Written 24 Sep 2026.
 
@@ -352,11 +352,19 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 ### M3 — Payments & dues
 
 - [x] Schema: payments + `record_payment_and_renew` (done in M2)
-- [ ] `verify_payment`, `cancel_payment` (cancelling a payment also cancels the membership it created) + RLS tests (reception cannot cancel a verified payment)
-- [ ] Payments page like `Payments.dc.html`: today/week/month KPIs, transactions table, take-payment panel (sheet on mobile)
-- [ ] Pending verification queue for owner/manager, 24-hour reminder for unverified payments
-- [ ] Printable/shareable receipt page `/r/[token]` (invoice numbers already exist)
-- [ ] Dues list + "pay due only" (no renewal)
+- [x] `verify_payment` (owner/manager), `cancel_payment` with reason (owner/manager any; reception only their own still-pending payment; cancelling also cancels the membership it paid for when nothing else covers it), `pay_due`, `get_receipt`, `payment_stats`, `gym_money_snapshot` + 19 new pgTAP tests
+- [x] Payments page like `Payments.dc.html`: today / this week (Sat–Fri) / this month totals with comparison to the previous period, transactions table, take-payment panel (side card on desktop, full-screen sheet on phones)
+- [x] Verification queue ("যাচাই বাকি") for owner/manager, oldest first, payments waiting 24h+ highlighted; pending count badge on the sidebar
+- [x] Receipt page `/r/[token]`: public secret link, printable (prints light), shareable on WhatsApp right after taking a payment
+- [x] Dues list with WhatsApp reminder (prefilled Bangla message) and "pay due only"; member profile links to receipts and "pay due"
+- [ ] Automatic 24-hour reminder message for unverified payments → with messaging (M6)
+- [ ] PDF report button from the design → reports (M5)
+
+**M3 notes (25 Sep 2026)**
+
+- Reminders and receipts are sent with a **one-tap WhatsApp link** (`wa.me`) for now: staff press send on their own phone. Automatic sending needs the WhatsApp/SMS providers (M6).
+- The receipt link is a random 24-character code; anyone with the link can see that one receipt (like a paper receipt), nothing else.
+- **Bug found by the tests and fixed:** a slow search update could still undo a tab choice on the member list (a second case of the M2 bug). Filter changes now cancel any pending search update.
 
 ### M4 — Dashboard
 
