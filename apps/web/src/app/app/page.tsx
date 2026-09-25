@@ -112,6 +112,14 @@ export default async function DashboardPage() {
       : Promise.resolve({ data: [] as { name: string }[] }),
   ]);
   const lowStock = lowStockData ?? [];
+  const { data: gymSettings } = await supabase
+    .from("gyms")
+    .select("settings")
+    .eq("id", membership.gymId)
+    .maybeSingle();
+  const target = Number(
+    (gymSettings?.settings as { monthly_target_paisa?: number } | null)?.monthly_target_paisa ?? 0,
+  );
 
   const s = summaryData as Summary | null;
   const todayChange = s ? percentChange(s.today_paisa, s.yesterday_paisa) : null;
@@ -267,9 +275,23 @@ export default async function DashboardPage() {
                 </>
               }
               sub={
-                monthChange !== null ? t("vsLastMonth", { change: signed(monthChange) }) : undefined
+                target > 0
+                  ? t("ofTarget", {
+                      pct: String(Math.round(((s?.month_paisa ?? 0) / target) * 100)),
+                    })
+                  : monthChange !== null
+                    ? t("vsLastMonth", { change: signed(monthChange) })
+                    : undefined
               }
-              subTone={monthChange !== null && monthChange > 0 ? "positive" : "muted"}
+              subTone={
+                target > 0
+                  ? (s?.month_paisa ?? 0) >= target
+                    ? "positive"
+                    : "muted"
+                  : monthChange !== null && monthChange > 0
+                    ? "positive"
+                    : "muted"
+              }
             />
           </>
         ) : (
