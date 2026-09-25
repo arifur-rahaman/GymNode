@@ -131,3 +131,22 @@ run **Part A4** again (Claude will say when it's needed).
 | `NEXT_PUBLIC_SITE_URL`                 | No      | Optional. Address used in email links; defaults to the request address |
 | `NEXT_PUBLIC_DEMO_MODE`                | No      | `true` on demo deployments                                             |
 | `ENABLE_DEV_UI`                        | No      | `true` shows `/dev/ui` in a production build                           |
+
+## Super admin account (done 26 Sep 2026)
+
+The founder uses a **separate account** for the admin panel (`/admin`) and a normal account for his own gym.
+To give someone super-admin rights on the live site, they sign up first, then in the Supabase SQL editor:
+
+```sql
+insert into public.platform_admins (user_id, role)
+select id, 'super_admin' from auth.users where email = 'their@email.com';
+```
+
+After that, more team members can be added from the admin panel → **টিম** (Team).
+To check who has admin rights:
+
+```sql
+select u.email, pa.role from public.platform_admins pa join auth.users u on u.id = pa.user_id;
+```
+
+**After each milestone:** Claude runs "Deploy database" and opens a pull request into `main`; the founder clicks **Merge**.
