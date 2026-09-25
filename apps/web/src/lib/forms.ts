@@ -40,6 +40,12 @@ const DB_ERRORS: Record<string, string> = {
   insufficient_stock: "insufficientStock",
   invalid_product: "invalidProduct",
   empty_cart: "emptyCart",
+  plan_limit_members: "planLimitMembers",
+  plan_limit_branches: "planLimitBranches",
+  invoice_exists: "invoiceExists",
+  invalid_setting: "invalidSetting",
+  user_not_found: "userNotFound",
+  cannot_remove_self: "cannotRemoveSelf",
 };
 
 /** Maps Supabase Auth / Postgres errors to our translation codes. */

@@ -52,7 +52,7 @@ test.describe("M1 auth & onboarding", () => {
   test("super admin lands on the admin area", async ({ page }) => {
     await login(page, "admin@gymnode.test", "GymNode-admin-1");
     await expect(page).toHaveURL(/\/admin$/);
-    await expect(page.getByRole("heading", { level: 1, name: "সুপার অ্যাডমিন" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "SaaS ড্যাশবোর্ড" })).toBeVisible();
   });
 
   test("new owner signs up, sets up a gym, adds staff; staff logs in by phone", async ({

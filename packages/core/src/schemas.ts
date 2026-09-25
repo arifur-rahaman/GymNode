@@ -269,3 +269,123 @@ export const saleSchema = z
     path: ["transactionId"],
   });
 export type SaleInput = z.input<typeof saleSchema>;
+
+// ---------------------------------------------------------------------------
+// Super admin & support (M7)
+// ---------------------------------------------------------------------------
+export const BILLING_METHODS = ["cash", "bkash", "nagad", "rocket", "card", "bank"] as const;
+export type BillingMethod = (typeof BILLING_METHODS)[number];
+
+const optionalTaka = z.union([z.literal(""), takaAmount]).transform((v) => (v === "" ? null : v));
+const optionalCount = z
+  .union([z.literal(""), wholeNumber(0, 1_000_000)])
+  .transform((v) => (v === "" ? null : v));
+
+export const PLAN_FEATURES = [
+  "sms_reminders",
+  "basic_reports",
+  "whatsapp_automation",
+  "member_app",
+  "website",
+  "branded_app",
+  "ai_diet",
+  "priority_support",
+] as const;
+export type PlanFeature = (typeof PLAN_FEATURES)[number];
+
+export const planSchema = z.object({
+  name: text(1, 40),
+  nameEn: text(1, 40),
+  /** Empty = price not decided yet ("[দাম]"). */
+  priceTaka: optionalTaka,
+  billingPeriod: z.enum(["monthly", "yearly"]),
+  /** Empty = unlimited. */
+  maxMembers: optionalCount,
+  maxBranches: optionalCount,
+  maxDevices: optionalCount,
+  features: z.array(z.enum(PLAN_FEATURES)),
+  isActive: z.boolean(),
+});
+export type PlanInput = z.input<typeof planSchema>;
+
+export const gymPlanSchema = z.object({
+  planId: z.string().trim(),
+  /** Empty = use the plan's price. */
+  priceTaka: optionalTaka,
+});
+export type GymPlanInput = z.input<typeof gymPlanSchema>;
+
+export const gymStatusSchema = z.object({
+  status: z.enum(["active", "suspended", "cancelled"]),
+  reason: text(3, 300),
+});
+export type GymStatusInput = z.input<typeof gymStatusSchema>;
+
+export const extendTrialSchema = z.object({ days: wholeNumber(1, 90) });
+export type ExtendTrialInput = z.input<typeof extendTrialSchema>;
+
+export const invoiceSchema = z.object({
+  amountTaka: takaAmount,
+  dueDate: requiredDate,
+  /** First day of the billed month, e.g. "2026-09-01"; empty for one-off invoices. */
+  periodMonth: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || /^\d{4}-\d{2}$/.test(v), ERR.invalidDate)
+    .transform((v) => (v === "" ? null : `${v}-01`)),
+  note: optionalText(300),
+});
+export type InvoiceInput = z.input<typeof invoiceSchema>;
+
+export const invoicePaidSchema = z
+  .object({
+    method: z.enum(BILLING_METHODS),
+    transactionId: z.string().trim().max(40, ERR.tooLong),
+    paidOn: requiredDate,
+  })
+  .refine((v) => ["cash", "card", "bank"].includes(v.method) || v.transactionId.length >= 4, {
+    message: ERR.transactionRequired,
+    path: ["transactionId"],
+  });
+export type InvoicePaidInput = z.input<typeof invoicePaidSchema>;
+
+export const supportSessionSchema = z.object({
+  reason: text(5, 500),
+  minutes: z.coerce
+    .number()
+    .int()
+    .refine((v) => [15, 30, 60, 120].includes(v), ERR.invalidNumber),
+});
+export type SupportSessionInput = z.input<typeof supportSessionSchema>;
+
+export const ticketSchema = z.object({
+  subject: text(3, 120),
+  body: text(1, 2000),
+  priority: z.enum(["normal", "urgent"]),
+});
+export type TicketInput = z.input<typeof ticketSchema>;
+
+export const ticketReplySchema = z.object({ body: text(1, 2000) });
+export type TicketReplyInput = z.input<typeof ticketReplySchema>;
+
+export const teamMemberSchema = z.object({
+  email: z.string().trim().toLowerCase().pipe(z.email(ERR.invalidEmail)),
+  role: z.enum(["super_admin", "support"]),
+});
+export type TeamMemberInput = z.input<typeof teamMemberSchema>;
+
+export const platformSettingsSchema = z.object({
+  trialDays: wholeNumber(1, 90),
+  graceDays: wholeNumber(1, 90),
+});
+export type PlatformSettingsInput = z.input<typeof platformSettingsSchema>;
+
+export const gymProfileSchema = z.object({
+  name: text(2, 80),
+  city: optionalText(60),
+  phone: optionalBdPhone,
+  address: optionalText(200),
+  /** Monthly income target for the dashboard (empty = none). */
+  monthlyTargetTaka: optionalTaka,
+});
+export type GymProfileInput = z.input<typeof gymProfileSchema>;

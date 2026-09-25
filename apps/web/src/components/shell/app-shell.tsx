@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
-import { LogOut, TriangleAlert } from "lucide-react";
+import Link from "next/link";
+import { LifeBuoy, LogOut, TriangleAlert } from "lucide-react";
+import { endSupport } from "@/app/admin/actions";
 import { getTranslations } from "next-intl/server";
+import { formatTimeDhaka } from "@gymnode/core";
 import type { Database } from "@gymnode/db";
 import { signOut } from "@/app/(auth)/actions";
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -27,6 +30,10 @@ export type ShellProps = {
   daysLeft: number | null;
   theme: Theme;
   badges?: Record<string, number>;
+  /** Support mode (platform admin viewing read-only). */
+  support?: { sessionId: string; expiresAt: string } | null;
+  /** Paying gym with an overdue subscription invoice. */
+  billingOverdue?: boolean;
 };
 
 /**
@@ -36,12 +43,23 @@ export type ShellProps = {
  *  - <768px: top bar + bottom tab bar, full menu in a sheet
  */
 export async function AppShell(props: ShellProps) {
-  const { children, role, gym, branchName, gyms, userName, accessState, daysLeft, theme, badges } =
-    props;
+  const {
+    children,
+    role,
+    gym,
+    branchName,
+    gyms,
+    userName,
+    accessState,
+    daysLeft,
+    theme,
+    badges,
+    support,
+    billingOverdue,
+  } = props;
   const t = await getTranslations("shell");
   const tr = await getTranslations("roles");
   const ta = await getTranslations("auth");
-  const tn = await getTranslations("nav");
 
   return (
     <div className="min-h-dvh md:flex">
@@ -71,7 +89,9 @@ export async function AppShell(props: ShellProps) {
               {t("trialDaysLeft", { days: String(daysLeft) })}
             </p>
             <span className="mt-1 block text-[13px] text-muted">
-              {t("seePlans")} · {tn("comingSoon")}
+              <Link href="/app/settings?tab=plan" className="text-accent-text hover:underline">
+                {t("seePlans")} →
+              </Link>
             </span>
           </div>
         ) : null}
@@ -84,7 +104,7 @@ export async function AppShell(props: ShellProps) {
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{userName}</p>
-            <p className="text-xs text-muted">{tr(role)}</p>
+            <p className="text-xs text-muted">{support ? t("supportRole") : tr(role)}</p>
           </div>
           <form action={signOut}>
             <Button type="submit" variant="ghost" size="icon-sm" aria-label={ta("logout")}>
@@ -123,6 +143,23 @@ export async function AppShell(props: ShellProps) {
           <GymLogo name={gym.name} logoPath={gym.logoPath} className="size-9" />
         </header>
 
+        {support ? (
+          <div
+            role="status"
+            className="sticky top-14 z-20 flex flex-wrap items-center gap-2.5 border-b border-border bg-badge-blue-bg px-4 py-2.5 text-sm font-medium text-badge-blue-fg md:top-0 md:px-8 print:hidden"
+          >
+            <LifeBuoy className="size-[18px] shrink-0" aria-hidden />
+            <span className="flex-1">
+              {t("supportBanner", { time: formatTimeDhaka(new Date(support.expiresAt)) })}
+            </span>
+            <form action={endSupport.bind(null, support.sessionId, gym.id)}>
+              <Button type="submit" size="sm" variant="secondary">
+                {t("supportEnd")}
+              </Button>
+            </form>
+          </div>
+        ) : null}
+
         {accessState === "past_due" || accessState === "suspended" ? (
           <div
             role="status"
@@ -131,7 +168,9 @@ export async function AppShell(props: ShellProps) {
             <TriangleAlert className="mt-0.5 size-[18px] shrink-0" aria-hidden />
             <span>
               {accessState === "past_due"
-                ? t("pastDueBanner", { days: String(Math.max(daysLeft ?? 0, 0)) })
+                ? billingOverdue
+                  ? t("billOverdueBanner")
+                  : t("pastDueBanner", { days: String(Math.max(daysLeft ?? 0, 0)) })
                 : t("suspendedBanner")}
             </span>
           </div>

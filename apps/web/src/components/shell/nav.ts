@@ -44,7 +44,7 @@ export const NAV_ITEMS: NavItem[] = [
   { key: "reports", href: "/app/reports", icon: BarChart3, roles: MGMT },
   { key: "messages", href: null, icon: MessageCircle, roles: MGMT, milestone: "M6" },
   { key: "website", href: null, icon: Globe, roles: ["owner"], milestone: "later" },
-  { key: "settings", href: null, icon: Settings, roles: MGMT, milestone: "M7" },
+  { key: "settings", href: "/app/settings", icon: Settings, roles: MGMT },
 ];
 
 // Mobile bottom bar (Dashboard-Mobile.dc.html): 4 destinations + "more".

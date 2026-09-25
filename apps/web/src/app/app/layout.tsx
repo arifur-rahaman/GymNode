@@ -21,7 +21,8 @@ export default async function GymPanelLayout({ children }: LayoutProps<"/app">) 
 
   const membership = await getActiveMembership();
   if (!membership) redirect((await isPlatformAdmin()) ? "/admin" : "/onboarding");
-  if (membership.role === "owner" && !membership.gym.onboardingCompletedAt) redirect("/onboarding");
+  if (!membership.support && membership.role === "owner" && !membership.gym.onboardingCompletedAt)
+    redirect("/onboarding");
 
   const supabase = await createClient();
   const canVerify = membership.role === "owner" || membership.role === "manager";
@@ -59,6 +60,14 @@ export default async function GymPanelLayout({ children }: LayoutProps<"/app">) 
   const branchName =
     branches && branches.length === 1 ? branches[0]!.name : (branches?.[0]?.name ?? null);
 
+  // An active (paying) gym is past due only because of an unpaid subscription invoice.
+  const { data: gymRow } = await supabase
+    .from("gyms")
+    .select("status")
+    .eq("id", membership.gymId)
+    .maybeSingle();
+  const billingOverdue = gymRow?.status === "active" && accessState === "past_due";
+
   let daysLeft: number | null = null;
   if (membership.gym.trialEndsAt) {
     const trialEnd = todayInDhaka(new Date(membership.gym.trialEndsAt));
@@ -74,11 +83,17 @@ export default async function GymPanelLayout({ children }: LayoutProps<"/app">) 
       role={membership.role}
       gym={{ id: membership.gymId, name: membership.gym.name, logoPath: membership.gym.logoPath }}
       branchName={branchName}
-      gyms={memberships.map((m) => ({ id: m.gymId, name: m.gym.name }))}
+      gyms={
+        membership.support
+          ? [{ id: membership.gymId, name: membership.gym.name }]
+          : memberships.map((m) => ({ id: m.gymId, name: m.gym.name }))
+      }
+      support={membership.support ?? null}
       userName={profile?.full_name || ""}
       accessState={accessState}
       badges={badges}
       daysLeft={daysLeft}
+      billingOverdue={billingOverdue}
       theme={theme}
     >
       {children}
