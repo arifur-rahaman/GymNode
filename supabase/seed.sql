@@ -232,18 +232,18 @@ begin
       insert into public.expenses (gym_id, branch_id, category_id, amount_paisa, spent_on, note, created_by)
       select v_gym.id, v_gym.branch_id, c.id, round(amt * v_gym.scale)::bigint, least(v_month + offs, v_today), note, null
       from (values
-        ('ভাড়া', 6000000, 2, 'মাসিক ভাড়া'),
-        ('বেতন', 5500000, 4, 'স্টাফ বেতন'),
-        ('বিদ্যুৎ ও পানি', 1200000 + floor(random() * 300000)::int, 9, 'বিল'),
-        ('যন্ত্রপাতি ও মেরামত', 200000 + floor(random() * 800000)::int, 15, 'মেরামত'),
-        ('সাপ্লিমেন্ট কেনা', 300000 + floor(random() * 500000)::int, 20, 'প্রোটিন স্টক')
+        ('ভাড়া', 2500000, 2, 'মাসিক ভাড়া'),
+        ('বেতন', 2000000, 4, 'স্টাফ বেতন'),
+        ('বিদ্যুৎ ও পানি', 500000 + floor(random() * 150000)::int, 9, 'বিল'),
+        ('যন্ত্রপাতি ও মেরামত', 100000 + floor(random() * 300000)::int, 15, 'মেরামত'),
+        ('সাপ্লিমেন্ট কেনা', 200000 + floor(random() * 300000)::int, 20, 'প্রোটিন স্টক')
       ) as x(cat, amt, offs, note)
       join public.expense_categories c on c.gym_id = v_gym.id and c.name = x.cat
       where v_month + offs <= v_today;
     end loop;
     -- Small daily expenses over the last two weeks.
     insert into public.expenses (gym_id, branch_id, category_id, amount_paisa, spent_on, note, created_by)
-    select v_gym.id, v_gym.branch_id, c.id, (20000 + floor(random() * 120000))::bigint, v_today - d, 'দৈনিক খরচ', null
+    select v_gym.id, v_gym.branch_id, c.id, (10000 + floor(random() * 60000))::bigint, v_today - d, 'দৈনিক খরচ', null
     from generate_series(0, 13) d
     join public.expense_categories c on c.gym_id = v_gym.id and c.name = 'অন্যান্য'
     where random() < 0.6;
@@ -270,4 +270,76 @@ begin
   end loop;
   -- Never in the future.
   delete from public.attendance where checked_in_at > now();
+end $$;
+
+
+-------------------------------------------------------------------------------
+-- M5: supplements shop — products, stock purchases and ~2 months of sales
+-------------------------------------------------------------------------------
+do $$
+declare
+  v_gym record;
+  v_today date := public.dhaka_today();
+  v_year int := extract(year from public.dhaka_today())::int;
+  v_product record;
+  v_sale uuid;
+  v_payment uuid;
+  v_member uuid;
+  v_qty int;
+  v_at timestamptz;
+  v_method public.payment_method;
+begin
+  perform setseed(0.3);
+  for v_gym in select g.id, (select id from public.branches b where b.gym_id = g.id order by created_at limit 1) as branch_id,
+                      (select user_id from public.gym_users gu where gu.gym_id = g.id and gu.role = 'owner' limit 1) as owner_id
+               from public.gyms g loop
+    insert into public.products (gym_id, name, price_paisa, cost_paisa, low_stock_at, sort_order)
+    values
+      (v_gym.id, 'প্রোটিন শেক', 15000, 9000, 10, 1),
+      (v_gym.id, 'হোয়ে প্রোটিন ১ কেজি', 420000, 340000, 3, 2),
+      (v_gym.id, 'মিনারেল ওয়াটার', 2500, 1500, 24, 3),
+      (v_gym.id, 'এনার্জি ড্রিংক', 8000, 5500, 12, 4),
+      (v_gym.id, 'প্রোটিন বার', 18000, 12000, 10, 5),
+      (v_gym.id, 'জিম গ্লাভস', 65000, 40000, 2, 6);
+    -- Opening stock (two months ago).
+    insert into public.stock_movements (gym_id, product_id, kind, qty_change, unit_cost_paisa, note, created_by, created_at)
+    select v_gym.id, p.id, 'purchase', q.qty, p.cost_paisa, 'শুরুর স্টক', v_gym.owner_id, now() - interval '62 days'
+    from public.products p
+    join (values ('প্রোটিন শেক', 160), ('হোয়ে প্রোটিন ১ কেজি', 10), ('মিনারেল ওয়াটার', 260),
+                 ('এনার্জি ড্রিংক', 90), ('প্রোটিন বার', 70), ('জিম গ্লাভস', 8)) q(name, qty) on q.name = p.name
+    where p.gym_id = v_gym.id;
+
+    -- Sales: a few per day for 60 days.
+    for d in 0 .. 59 loop
+      for s in 1 .. (1 + floor(random() * 4))::int loop
+        v_at := ((v_today - d) + time '07:00') at time zone 'Asia/Dhaka' + make_interval(mins => floor(random() * 780)::int);
+        continue when v_at > now();
+        select * into v_product from public.products p
+        where p.gym_id = v_gym.id and p.stock_qty > 2 and p.name <> 'জিম গ্লাভস'
+        order by random() limit 1;
+        continue when v_product.id is null;
+        v_qty := (1 + floor(random() * 2))::int;
+        v_member := case when random() < 0.6 then
+          (select id from public.members m where m.gym_id = v_gym.id and m.status = 'active' order by random() limit 1) end;
+        v_method := case when random() < 0.7 then 'cash' else 'bkash' end;
+        insert into public.payments (gym_id, branch_id, member_id, kind, amount_paisa, method, transaction_id, status,
+          paid_at, received_by, invoice_no, verified_at)
+        values (v_gym.id, v_gym.branch_id, v_member, 'sale', v_product.price_paisa * v_qty, v_method,
+          case when v_method = 'bkash' then upper(substr(md5(random()::text), 1, 10)) end,
+          (case when v_method = 'bkash' and d = 0 then 'pending_verification' else 'completed' end)::public.payment_status,
+          v_at, v_gym.owner_id,
+          'INV-' || v_year || '-' || lpad(app_private.next_counter(v_gym.id, 'invoice', v_year)::text, 5, '0'),
+          case when v_method = 'bkash' and d > 0 then v_at + interval '3 hours' end)
+        returning id into v_payment;
+        insert into public.sales (gym_id, branch_id, member_id, payment_id, subtotal_paisa, discount_paisa, total_paisa, created_by, created_at)
+        values (v_gym.id, v_gym.branch_id, v_member, v_payment, v_product.price_paisa * v_qty, 0, v_product.price_paisa * v_qty,
+          v_gym.owner_id, v_at)
+        returning id into v_sale;
+        insert into public.sale_items (sale_id, gym_id, product_id, product_name, qty, unit_price_paisa, unit_cost_paisa, line_total_paisa)
+        values (v_sale, v_gym.id, v_product.id, v_product.name, v_qty, v_product.price_paisa, v_product.cost_paisa, v_product.price_paisa * v_qty);
+        insert into public.stock_movements (gym_id, product_id, kind, qty_change, sale_id, created_by, created_at)
+        values (v_gym.id, v_product.id, 'sale', -v_qty, v_sale, v_gym.owner_id, v_at);
+      end loop;
+    end loop;
+  end loop;
 end $$;

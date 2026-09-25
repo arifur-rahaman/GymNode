@@ -1107,6 +1107,62 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          cost_paisa: number | null
+          created_at: string
+          deleted_at: string | null
+          gym_id: string
+          id: string
+          is_active: boolean
+          is_low_stock: boolean | null
+          low_stock_at: number
+          name: string
+          price_paisa: number
+          sort_order: number
+          stock_qty: number
+          updated_at: string
+        }
+        Insert: {
+          cost_paisa?: number | null
+          created_at?: string
+          deleted_at?: string | null
+          gym_id: string
+          id?: string
+          is_active?: boolean
+          is_low_stock?: boolean | null
+          low_stock_at?: number
+          name: string
+          price_paisa: number
+          sort_order?: number
+          stock_qty?: number
+          updated_at?: string
+        }
+        Update: {
+          cost_paisa?: number | null
+          created_at?: string
+          deleted_at?: string | null
+          gym_id?: string
+          id?: string
+          is_active?: boolean
+          is_low_stock?: boolean | null
+          low_stock_at?: number
+          name?: string
+          price_paisa?: number
+          sort_order?: number
+          stock_qty?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -1142,6 +1198,210 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      sale_items: {
+        Row: {
+          gym_id: string
+          id: string
+          line_total_paisa: number
+          product_id: string
+          product_name: string
+          qty: number
+          sale_id: string
+          unit_cost_paisa: number | null
+          unit_price_paisa: number
+        }
+        Insert: {
+          gym_id: string
+          id?: string
+          line_total_paisa: number
+          product_id: string
+          product_name: string
+          qty: number
+          sale_id: string
+          unit_cost_paisa?: number | null
+          unit_price_paisa: number
+        }
+        Update: {
+          gym_id?: string
+          id?: string
+          line_total_paisa?: number
+          product_id?: string
+          product_name?: string
+          qty?: number
+          sale_id?: string
+          unit_cost_paisa?: number | null
+          unit_price_paisa?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sale_items_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          branch_id: string
+          created_at: string
+          created_by: string | null
+          discount_paisa: number
+          gym_id: string
+          id: string
+          member_id: string | null
+          payment_id: string
+          subtotal_paisa: number
+          total_paisa: number
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          created_by?: string | null
+          discount_paisa?: number
+          gym_id: string
+          id?: string
+          member_id?: string | null
+          payment_id: string
+          subtotal_paisa: number
+          total_paisa: number
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          created_by?: string | null
+          discount_paisa?: number
+          gym_id?: string
+          id?: string
+          member_id?: string | null
+          payment_id?: string
+          subtotal_paisa?: number
+          total_paisa?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: true
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expense_id: string | null
+          gym_id: string
+          id: string
+          kind: Database["public"]["Enums"]["stock_movement_kind"]
+          note: string
+          product_id: string
+          qty_change: number
+          sale_id: string | null
+          unit_cost_paisa: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expense_id?: string | null
+          gym_id: string
+          id?: string
+          kind: Database["public"]["Enums"]["stock_movement_kind"]
+          note?: string
+          product_id: string
+          qty_change: number
+          sale_id?: string | null
+          unit_cost_paisa?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expense_id?: string | null
+          gym_id?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["stock_movement_kind"]
+          note?: string
+          product_id?: string
+          qty_change?: number
+          sale_id?: string | null
+          unit_cost_paisa?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscription_invoices: {
         Row: {
@@ -1317,6 +1577,20 @@ export type Database = {
         }
         Returns: string
       }
+      add_stock: {
+        Args: {
+          p_expense_category_id?: string
+          p_note?: string
+          p_product_id: string
+          p_qty: number
+          p_unit_cost_paisa?: number
+        }
+        Returns: Json
+      }
+      adjust_stock: {
+        Args: { p_new_qty: number; p_product_id: string; p_reason: string }
+        Returns: undefined
+      }
       can_manage_staff_role: {
         Args: {
           p_gym_id: string
@@ -1410,6 +1684,17 @@ export type Database = {
         }
         Returns: Json
       }
+      record_sale: {
+        Args: {
+          p_discount_paisa?: number
+          p_gym_id: string
+          p_items: Json
+          p_member_id?: string
+          p_method?: Database["public"]["Enums"]["payment_method"]
+          p_transaction_id?: string
+        }
+        Returns: Json
+      }
       register_member: {
         Args: {
           p_address?: string
@@ -1428,6 +1713,16 @@ export type Database = {
           p_phone: string
           p_trainer_id?: string
           p_transaction_id?: string
+        }
+        Returns: Json
+      }
+      report_summary: {
+        Args: {
+          p_from: string
+          p_gym_id: string
+          p_prev_from: string
+          p_prev_to: string
+          p_to: string
         }
         Returns: Json
       }
@@ -1470,6 +1765,7 @@ export type Database = {
       payment_method: "cash" | "bkash" | "nagad" | "rocket" | "card"
       payment_status: "pending_verification" | "completed" | "cancelled"
       platform_role: "super_admin" | "support"
+      stock_movement_kind: "purchase" | "sale" | "sale_return" | "adjustment"
       subscription_status: "trialing" | "active" | "past_due" | "cancelled"
     }
     CompositeTypes: {
@@ -1615,6 +1911,7 @@ export const Constants = {
       payment_method: ["cash", "bkash", "nagad", "rocket", "card"],
       payment_status: ["pending_verification", "completed", "cancelled"],
       platform_role: ["super_admin", "support"],
+      stock_movement_kind: ["purchase", "sale", "sale_return", "adjustment"],
       subscription_status: ["trialing", "active", "past_due", "cancelled"],
     },
   },
