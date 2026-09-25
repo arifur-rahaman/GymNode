@@ -16,6 +16,8 @@
   --color-surface-2: var(--surface-2);
   --color-border: var(--border);
   --color-chart-muted: var(--chart-muted);
+  --color-chart-income: var(--chart-income);
+  --color-chart-expense: var(--chart-expense);
   --color-text: var(--text);
   --color-muted: var(--text-muted);
   --color-accent: var(--accent);

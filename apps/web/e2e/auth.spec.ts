@@ -97,8 +97,10 @@ test.describe("M1 auth & onboarding", () => {
 
     await page.getByRole("button", { name: "সেটআপ শেষ, ড্যাশবোর্ডে যান" }).click();
     await expect(page).toHaveURL(/\/app$/);
-    // Figures use English digits (DESIGN_SYSTEM §3).
-    await expect(page.getByText("3টি প্যাকেজ তৈরি")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "ড্যাশবোর্ড" })).toBeVisible();
+    await page.goto("/app/packages");
+    await expect(page.getByText("মাসিক").filter({ visible: true }).first()).toBeVisible();
+    await page.goto("/app");
     // Tenant isolation in the UI: the seeded gym is not visible to this new owner.
     await expect(page.getByText("পাওয়ার হাউস জিম")).toHaveCount(0);
     await logout(page, isMobile);

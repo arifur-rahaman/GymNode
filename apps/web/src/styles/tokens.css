@@ -14,6 +14,9 @@
   --surface-2: #23262d;
   --border: #2a2d34;
   --chart-muted: #3a3e47;
+  /* Chart series (validated for colour-blind separation; see PLAN.md M4 notes). */
+  --chart-income: #c6ff3d;
+  --chart-expense: #ff6b2c;
 
   /* text */
   --text: #f4f4f5;
@@ -72,6 +75,9 @@
   --surface-2: #eef0ea;
   --border: #e2e4de;
   --chart-muted: #d4d8cf;
+  /* Lime is unreadable on white, so light mode uses darker, CVD-checked steps. */
+  --chart-income: #3f6212;
+  --chart-expense: #f97316;
 
   --text: #111214;
   --text-muted: #555b64;

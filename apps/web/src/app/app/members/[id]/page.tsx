@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CalendarCheck, MessageCircle, Pencil, Scale } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import {
+  addDays,
   daysBetween,
   formatDateShort,
   formatTaka,
@@ -31,6 +32,8 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { PaymentRowActions } from "@/app/app/payments/row-actions";
 import { getUserId } from "@/lib/auth";
+import { AttendanceHeatmap } from "@/components/members/attendance-heatmap";
+import { CheckInButton } from "./check-in-button";
 import { DeleteMemberButton, FreezeControls, RenewSheet } from "./member-actions";
 
 export async function generateMetadata({
@@ -74,7 +77,7 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
   ]);
   if (!ov || !m) notFound();
 
-  const [packages, photos, trainer, locker, payments, memberships] = await Promise.all([
+  const [packages, photos, trainer, locker, payments, memberships, visits] = await Promise.all([
     frontDesk ? gymPackages(membership.gymId) : Promise.resolve([]),
     signedPhotoUrls([m.photo_path]),
     m.assigned_trainer_id
@@ -104,7 +107,18 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
       .neq("status", "cancelled")
       .order("end_date", { ascending: false })
       .limit(24),
+    supabase
+      .from("attendance")
+      .select("checked_in_at")
+      .eq("member_id", id)
+      .eq("result", "allowed")
+      .gte("checked_in_at", new Date(`${addDays(today, -40)}T00:00:00+06:00`).toISOString()),
   ]);
+  const presentDays = new Set(
+    (visits.data ?? []).map((v) => todayInDhaka(new Date(v.checked_in_at))),
+  );
+  const monthPrefix = today.slice(0, 8);
+  const presentThisMonth = [...presentDays].filter((d) => d.startsWith(monthPrefix)).length;
 
   const status = (m.status === "pending" ? "expired" : ov.display_status) as MemberDisplayStatus;
   const duePaisa = Number(ov.due_paisa ?? 0);
@@ -288,6 +302,7 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
 
             {frontDesk && m.status !== "pending" ? (
               <div className="flex flex-wrap gap-2.5">
+                <CheckInButton memberId={m.id} name={m.full_name} canOverride={canManage} />
                 <RenewSheet
                   memberId={m.id}
                   memberLabel={`${m.full_name} · ${m.member_code ?? ""}`}
@@ -331,7 +346,28 @@ export default async function MemberProfilePage({ params }: PageProps<"/app/memb
               <CardHeader>
                 <CardTitle>{t("attendance")}</CardTitle>
               </CardHeader>
-              <EmptyState icon={<CalendarCheck />} message={t("attendanceSoon")} className="py-6" />
+              {presentDays.size ? (
+                <div className="flex flex-col gap-3">
+                  <p className="text-sm text-muted">
+                    {t("attendanceMonth")}:{" "}
+                    <span className="num font-semibold text-text">{presentThisMonth}</span> ·{" "}
+                    {t("attendanceWeeks", { count: String(presentDays.size) })}
+                  </p>
+                  <AttendanceHeatmap
+                    today={today}
+                    presentDays={presentDays}
+                    weekdayLabels={t("weekdays").split(",")}
+                    presentLabel={t("present")}
+                    absentLabel={t("absent")}
+                  />
+                </div>
+              ) : (
+                <EmptyState
+                  icon={<CalendarCheck />}
+                  message={t("attendanceSoon")}
+                  className="py-6"
+                />
+              )}
             </Card>
             <Card>
               <CardHeader>
