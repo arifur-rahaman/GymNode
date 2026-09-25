@@ -198,18 +198,20 @@ export default async function GymSettingsPage({ searchParams }: PageProps<"/app/
               {invoices.map((inv) => {
                 const overdue = inv.status === "unpaid" && inv.due_date < today;
                 return (
-                  <li key={inv.id} className="flex flex-wrap items-center gap-3 py-2.5 text-sm">
-                    <span className="num font-semibold">{inv.invoice_no}</span>
-                    <span className="num flex-1 text-muted">
+                  <li key={inv.id} className="flex flex-col gap-1 py-2.5 text-sm">
+                    <span className="flex items-center gap-3">
+                      <span className="num flex-1 font-semibold">{inv.invoice_no}</span>
+                      <span className="num font-semibold">
+                        {formatTaka(Number(inv.amount_paisa))}
+                      </span>
+                      <Badge tone={inv.status === "paid" ? "green" : overdue ? "red" : "amber"}>
+                        {overdue ? tb("overdue") : tb(`status_${inv.status}`)}
+                      </Badge>
+                    </span>
+                    <span className="num text-[13px] text-muted">
                       {tb("due")} {formatDateShort(inv.due_date)}
                       {inv.method ? ` · ${tbm(inv.method)}` : ""}
                     </span>
-                    <span className="num font-semibold">
-                      {formatTaka(Number(inv.amount_paisa))}
-                    </span>
-                    <Badge tone={inv.status === "paid" ? "green" : overdue ? "red" : "amber"}>
-                      {overdue ? tb("overdue") : tb(`status_${inv.status}`)}
-                    </Badge>
                   </li>
                 );
               })}

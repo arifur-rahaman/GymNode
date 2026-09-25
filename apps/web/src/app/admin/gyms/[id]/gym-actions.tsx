@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { Eye } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, type UseFormReturn } from "react-hook-form";
+import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -49,7 +50,8 @@ type Gym = {
 
 /** Runs an action and maps its errors onto a react-hook-form form. */
 function useAction<T extends Record<string, unknown>>(
-  form: ReturnType<typeof useForm<T>>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the resolver's output type varies per form
+  form: UseFormReturn<T, any, any>,
   run: (values: T) => Promise<ActionResult<unknown>>,
   success: string,
   onDone?: () => void,
@@ -331,10 +333,9 @@ function TrialForm({ gymId }: { gymId: string }) {
 }
 
 function InvoiceCard({ gym, today }: { gym: Gym; today: IsoDate }) {
-  const t = useTranslations("admin");
   const tb = useTranslations("billing");
   const errorText = useErrorText();
-  const form = useForm<InvoiceInput>({
+  const form = useForm<InvoiceInput, unknown, z.output<typeof invoiceSchema>>({
     resolver: zodResolver(invoiceSchema),
     defaultValues: {
       amountTaka: gym.monthlyPrice !== null ? gym.monthlyPrice / 100 : ("" as unknown as number),

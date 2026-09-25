@@ -104,7 +104,7 @@ export async function AppShell(props: ShellProps) {
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{userName}</p>
-            <p className="text-xs text-muted">{tr(role)}</p>
+            <p className="text-xs text-muted">{support ? t("supportRole") : tr(role)}</p>
           </div>
           <form action={signOut}>
             <Button type="submit" variant="ghost" size="icon-sm" aria-label={ta("logout")}>

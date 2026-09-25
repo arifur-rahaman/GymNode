@@ -192,28 +192,33 @@ export default async function AdminGymPage({ params }: PageProps<"/admin/gyms/[i
             {g.invoices.length ? (
               <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface">
                 {g.invoices.map((inv) => (
-                  <li key={inv.id} className="flex flex-wrap items-center gap-3 px-4 py-3 text-sm">
-                    <span className="num w-32 font-semibold">{inv.invoice_no}</span>
-                    <span className="num w-24">{formatTaka(Number(inv.amount_paisa))}</span>
-                    <span className="num flex-1 text-muted">
+                  <li
+                    key={inv.id}
+                    className="flex flex-col gap-2 px-4 py-3 text-sm md:flex-row md:items-center md:gap-3"
+                  >
+                    <span className="flex flex-1 items-center gap-3">
+                      <span className="num font-semibold">{inv.invoice_no}</span>
+                      <span className="num">{formatTaka(Number(inv.amount_paisa))}</span>
+                      <Badge
+                        tone={
+                          inv.status === "paid"
+                            ? "green"
+                            : inv.status === "void"
+                              ? "gray"
+                              : inv.overdue
+                                ? "red"
+                                : "amber"
+                        }
+                      >
+                        {inv.status === "unpaid" && inv.overdue
+                          ? tb("overdue")
+                          : tb(`status_${inv.status}`)}
+                      </Badge>
+                    </span>
+                    <span className="num text-[13px] text-muted">
                       {tb("due")} {formatDateShort(inv.due_date)}
                       {inv.method ? ` · ${tm(inv.method)}` : ""}
                     </span>
-                    <Badge
-                      tone={
-                        inv.status === "paid"
-                          ? "green"
-                          : inv.status === "void"
-                            ? "gray"
-                            : inv.overdue
-                              ? "red"
-                              : "amber"
-                      }
-                    >
-                      {inv.status === "unpaid" && inv.overdue
-                        ? tb("overdue")
-                        : tb(`status_${inv.status}`)}
-                    </Badge>
                     {isSuper && inv.status === "unpaid" ? (
                       <InvoiceActions
                         invoiceId={inv.id}

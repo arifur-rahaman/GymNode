@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -27,7 +28,7 @@ export function GymProfileForm({ values, canEdit }: { values: GymProfileInput; c
   const errorText = useErrorText();
   const [pending, startTransition] = useTransition();
   const [formError, setFormError] = useState<string | null>(null);
-  const form = useForm<GymProfileInput>({
+  const form = useForm<GymProfileInput, unknown, z.output<typeof gymProfileSchema>>({
     resolver: zodResolver(gymProfileSchema),
     defaultValues: values,
   });

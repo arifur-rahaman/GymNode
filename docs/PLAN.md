@@ -1,6 +1,6 @@
 # GymNode — Build Plan (Phase 1: Web)
 
-> Status: **M5 done (25 Sep 2026). Next: M6 (messaging), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
+> Status: **M7 done (26 Sep 2026). M6 (messaging) and M8 (access control) are next, when the founder is ready.** Q1–Q5 are decided (see §8).
 > Sources: `docs/design/CLAUDE_CODE_PROMPT.md` (the brief), `docs/design/DESIGN_SYSTEM.md`, `docs/design/tokens.css`, `docs/design/designs/*.dc.html`.
 > Written 24 Sep 2026.
 
@@ -413,10 +413,24 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 
 ### M7 — Super admin
 
-- [ ] SA dashboard, gyms list + filters, support mode (audited, read-only, time-limited)
-- [ ] Plans (editable placeholder prices) & subscription invoices
-- [ ] Ops: offline devices, message usage vs plan limits, support tickets
-- [ ] Plan limits enforced in the gym panel
+- [x] SA dashboard (gyms, MRR, trials, overdue, churn, 12-month billing chart, plans breakdown, recent sign-ups, alerts)
+- [x] Gyms list with status tabs, city filter and search; gym detail page (plan & price, activate/suspend/cancel with reason, extend trial, invoices, tickets, history)
+- [x] Support mode: reason required, 15–120 minutes, read-only (the database refuses changes), banner in the gym panel, can be ended, always audited
+- [x] Plans page (prices stay "[দাম]" until decided; limits and features editable, audited) and subscription billing (monthly invoice generation, mark paid with bKash/Nagad/bank, void with reason; overdue → "বিল বকেয়া" banner for the gym)
+- [x] Support tickets: gym owner/manager write from Settings → Support; the team answers in the admin panel
+- [x] Team page (super admin / support roles) and platform settings (trial length, grace days)
+- [x] Plan limits enforced by the database: members and branches (device limits come with M8). Trials have no limits
+- [x] Gym Settings page: gym details, monthly income target (dashboard shows "% of target"), plan & usage & invoices, support
+- [ ] Ops: offline devices → M8; message usage vs plan limits → M6
+- [x] 36 new pgTAP tests (185 total), 10 new end-to-end tests
+
+**M7 notes (26 Sep 2026)**
+
+- **Prices are still undecided.** Plans show "[দাম]". Gyms without a price get no automatic monthly invoice. The sample data uses made-up prices only so the screens have numbers.
+- **Paying gyms are never suspended automatically.** An overdue invoice shows a "বিল বকেয়া" banner but the gym keeps working; suspending is your decision (button on the gym page). Trials still become read-only 7 days after they end (Q3).
+- **Support team role:** can see everything and answer tickets, but cannot change plans, bills, status or settings. Only super admins can.
+- **How gyms pay you (for now):** bKash/Nagad/bank, then you mark the invoice paid in the admin panel. Online payment can come later.
+- New sample logins: `support@gymnode.test` / `GymNode-admin-1` (support team), plus 8 small sample gyms.
 
 ### M8 — Access control
 
