@@ -1,6 +1,6 @@
 # GymNode — Build Plan (Phase 1: Web)
 
-> Status: **M3 done (25 Sep 2026). Next: M4 (dashboard), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
+> Status: **M4 done (25 Sep 2026). Next: M5 (expenses, sales & stock, reports), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
 > Sources: `docs/design/CLAUDE_CODE_PROMPT.md` (the brief), `docs/design/DESIGN_SYSTEM.md`, `docs/design/tokens.css`, `docs/design/designs/*.dc.html`.
 > Written 24 Sep 2026.
 
@@ -368,9 +368,19 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 
 ### M4 — Dashboard
 
-- [ ] `dashboard_summary` function
-- [ ] Desktop / tablet / mobile layouts per the three designs
-- [ ] 14-day income vs expense chart, method breakdown, expiring this week (renew + WhatsApp link), live check-ins via Realtime
+- [x] `dashboard_summary` (today vs yesterday, month vs same days last month, active/new members, dues, check-ins, 14 days of income vs expense, payment methods) + 14 new pgTAP tests
+- [x] Desktop / tablet / mobile layouts per the three designs (hero collection tile + 2×2 KPIs on phones, 7-day chart on phones)
+- [x] Income vs expense chart (Recharts): legend, hover tooltip, screen-reader table; colours validated for colour-blindness in both themes
+- [x] Payment methods this month, expiring this week (renew + WhatsApp), live check-ins via Supabase Realtime
+- [x] **Check-ins now (moved forward from M8):** `attendance` table in the M8 shape; reception checks members in by hand (search on the dashboard or button on the profile); expired/frozen members are blocked; owner/manager can override (audited); profile shows the 5-week attendance grid
+- [x] **Expenses tables (moved forward from M5)** so the chart shows real expenses; salaries visible to the owner only; default categories for every gym. Entry screens stay in M5
+- [x] Trainer dashboard shows no money
+
+**M4 notes (25 Sep 2026)**
+
+- **Chart colours:** dark mode uses the design's lime/orange (colour-blind and contrast checks pass). In light mode the lime is nearly invisible on white, so income uses the design's dark olive `#3F6212` and expense `#F97316` (colour-blind check passes; the orange is slightly low-contrast, so the chart always has a legend, tooltips and a data table).
+- **Bug found by the tests and fixed:** the live check-in feed stayed empty because it connected before the login session was loaded, so the database (correctly) sent nothing. It now waits for the session.
+- "লক্ষ্যের 76%" (monthly target) from the design needs a target setting; until settings exist (M7) the tile compares with the same days of last month instead.
 
 ### M5 — Expenses, sales & stock, reports
 
