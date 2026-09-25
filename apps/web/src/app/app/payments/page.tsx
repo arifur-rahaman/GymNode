@@ -144,7 +144,7 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/app/pay
     let q = supabase
       .from("payments")
       .select(
-        "id, paid_at, amount_paisa, method, status, receipt_token, received_by, kind, transaction_id, member_id, members(full_name, member_code), memberships(packages(name))",
+        "id, paid_at, amount_paisa, method, status, receipt_token, received_by, kind, transaction_id, member_id, members(full_name, member_code), memberships(packages(name)), sales(sale_items(product_name, qty))",
         { count: "exact" },
       )
       .eq("gym_id", membership.gymId);
@@ -160,16 +160,25 @@ export default async function PaymentsPage({ searchParams }: PageProps<"/app/pay
     txRows = (data ?? []).map((p) => {
       const member = p.members as { full_name: string; member_code: string | null } | null;
       const pkg = (p.memberships as { packages: { name: string } | null } | null)?.packages?.name;
+      // "প্রোটিন শেক ×2 · বিক্রি" as in Payments.dc.html.
+      type SaleRel = { sale_items: { product_name: string; qty: number }[] };
+      const sales = p.sales as SaleRel | SaleRel[] | null;
+      const saleItems = (Array.isArray(sales) ? sales : sales ? [sales] : [])
+        .flatMap((s) => s.sale_items)
+        .map((i) => `${i.product_name} ×${i.qty}`)
+        .join(", ");
       return {
         id: p.id,
         paidAt: p.paid_at,
         memberId: p.member_id,
-        memberName: member?.full_name ?? "—",
+        memberName: member?.full_name ?? (p.kind === "sale" ? t("walkIn") : "—"),
         what:
           p.kind === "due"
             ? t("kindDue")
             : p.kind === "sale"
-              ? t("kindSale")
+              ? saleItems
+                ? `${saleItems} · ${t("kindSale")}`
+                : t("kindSale")
               : (pkg ?? t("kindOther")),
         amount: p.amount_paisa,
         method: p.method,

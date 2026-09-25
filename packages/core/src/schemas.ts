@@ -202,3 +202,70 @@ export const dueSchema = z
 export type DueInput = z.input<typeof dueSchema>;
 
 export const cancelPaymentSchema = z.object({ reason: text(3, 300) });
+
+// ---------------------------------------------------------------------------
+// Expenses, shop and stock (M5)
+// ---------------------------------------------------------------------------
+const positiveTaka = takaAmount.refine((v) => v > 0, ERR.invalidNumber);
+
+const wholeNumber = (min: number, max: number) =>
+  z.coerce
+    .number({ error: ERR.invalidNumber })
+    .int(ERR.invalidNumber)
+    .min(min, ERR.invalidNumber)
+    .max(max, ERR.invalidNumber);
+
+export const expenseSchema = z.object({
+  categoryId: z.string().trim().min(1, ERR.required),
+  amountTaka: positiveTaka,
+  spentOn: requiredDate,
+  note: optionalText(300),
+});
+export type ExpenseInput = z.input<typeof expenseSchema>;
+
+export const expenseCategorySchema = z.object({
+  name: text(1, 60),
+  isSalary: z.boolean(),
+});
+export type ExpenseCategoryInput = z.input<typeof expenseCategorySchema>;
+
+export const productSchema = z.object({
+  name: text(1, 80),
+  priceTaka: positiveTaka,
+  lowStockAt: wholeNumber(0, 100_000),
+  isActive: z.boolean(),
+});
+export type ProductInput = z.input<typeof productSchema>;
+
+/** Stock in. The purchase can be recorded as an expense at the same time. */
+export const stockInSchema = z.object({
+  qty: wholeNumber(1, 100_000),
+  unitCostTaka: takaAmount,
+  recordExpense: z.boolean(),
+  categoryId: z.string().trim(),
+  note: optionalText(300),
+});
+export type StockInInput = z.input<typeof stockInSchema>;
+
+export const stockAdjustSchema = z.object({
+  newQty: wholeNumber(0, 100_000),
+  reason: text(3, 300),
+});
+export type StockAdjustInput = z.input<typeof stockAdjustSchema>;
+
+export const saleSchema = z
+  .object({
+    items: z
+      .array(z.object({ productId: z.string().min(1), qty: wholeNumber(1, 999) }))
+      .min(1, ERR.required)
+      .max(50),
+    memberId: optionalId,
+    discountTaka: takaAmount,
+    method: z.enum(PAYMENT_METHODS),
+    transactionId: z.string().trim().max(40, ERR.tooLong),
+  })
+  .refine((v) => !needsTransactionId(v.method) || v.transactionId.length >= 4, {
+    message: ERR.transactionRequired,
+    path: ["transactionId"],
+  });
+export type SaleInput = z.input<typeof saleSchema>;

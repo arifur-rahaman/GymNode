@@ -158,3 +158,65 @@ export function percentChange(current: number, previous: number): number | null 
   if (previous === 0) return null;
   return Math.round(((current - previous) / previous) * 100);
 }
+
+const MONTHS: Record<Locale, { long: string[]; short: string[] }> = {
+  bn: {
+    long: [
+      "জানুয়ারি",
+      "ফেব্রুয়ারি",
+      "মার্চ",
+      "এপ্রিল",
+      "মে",
+      "জুন",
+      "জুলাই",
+      "আগস্ট",
+      "সেপ্টেম্বর",
+      "অক্টোবর",
+      "নভেম্বর",
+      "ডিসেম্বর",
+    ],
+    // Reports.dc.html axis labels.
+    short: [
+      "জানু",
+      "ফেব্রু",
+      "মার্চ",
+      "এপ্রি",
+      "মে",
+      "জুন",
+      "জুলা",
+      "আগ",
+      "সেপ্ট",
+      "অক্টো",
+      "নভে",
+      "ডিসে",
+    ],
+  },
+  en: {
+    long: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    short: MONTHS_SHORT,
+  },
+};
+
+/** Month name for a date, English digits for the year: "সেপ্টেম্বর 2026", "Sep". */
+export function formatMonth(
+  date: IsoDate,
+  locale: Locale,
+  { style = "long", withYear = true }: { style?: "long" | "short"; withYear?: boolean } = {},
+): string {
+  if (!isIsoDate(date)) throw new RangeError(`Invalid date: ${date}`);
+  const name = MONTHS[locale][style][Number(date.slice(5, 7)) - 1];
+  return withYear ? `${name} ${date.slice(0, 4)}` : name!;
+}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { UserPlus } from "lucide-react";
+import { PackageX, UserPlus } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import {
   addDays,
@@ -66,6 +66,7 @@ export default async function DashboardPage() {
   const tn = await getTranslations("nav");
   const tm = await getTranslations("methods");
   const tmem = await getTranslations("members");
+  const ts = await getTranslations("shop");
   const locale = (await getLocale()) as Locale;
   const membership = await requireGym();
   const profile = await getProfile();
@@ -74,7 +75,12 @@ export default async function DashboardPage() {
   const supabase = await createClient();
   const today = todayInDhaka();
 
-  const [{ data: summaryData }, { data: expiringData }, { data: checkinData }] = await Promise.all([
+  const [
+    { data: summaryData },
+    { data: expiringData },
+    { data: checkinData },
+    { data: lowStockData },
+  ] = await Promise.all([
     supabase.rpc("dashboard_summary", { p_gym_id: membership.gymId, p_days: 14 }),
     supabase
       .from("member_overview")
@@ -93,7 +99,19 @@ export default async function DashboardPage() {
       .gte("checked_in_at", new Date(`${today}T00:00:00+06:00`).toISOString())
       .order("checked_in_at", { ascending: false })
       .limit(8),
+    seesMoney
+      ? supabase
+          .from("products")
+          .select("name")
+          .eq("gym_id", membership.gymId)
+          .is("deleted_at", null)
+          .eq("is_active", true)
+          .eq("is_low_stock", true)
+          .order("stock_qty")
+          .limit(20)
+      : Promise.resolve({ data: [] as { name: string }[] }),
   ]);
+  const lowStock = lowStockData ?? [];
 
   const s = summaryData as Summary | null;
   const todayChange = s ? percentChange(s.today_paisa, s.yesterday_paisa) : null;
@@ -208,6 +226,20 @@ export default async function DashboardPage() {
             </Button>
           }
         />
+      ) : null}
+
+      {lowStock.length ? (
+        <Link
+          href="/app/sales?tab=stock"
+          className="flex items-center gap-2.5 rounded-md bg-badge-amber-bg px-4 py-3 text-sm font-medium text-badge-amber-fg hover:underline"
+        >
+          <PackageX className="size-[18px] shrink-0" aria-hidden />
+          <span className="min-w-0 flex-1 truncate">
+            {ts("lowStockBanner", { count: String(lowStock.length) })}:{" "}
+            {lowStock.map((p) => p.name).join(", ")}
+          </span>
+          <span className="shrink-0">{ts("lowStockLink")} →</span>
+        </Link>
       ) : null}
 
       {/* KPIs: phones get a 2×2 grid with today's collection as the wide hero tile. */}

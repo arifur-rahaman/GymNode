@@ -230,7 +230,7 @@ begin
     for i in 0 .. 5 loop
       v_month := (date_trunc('month', v_today) - make_interval(months => i))::date;
       insert into public.expenses (gym_id, branch_id, category_id, amount_paisa, spent_on, note, created_by)
-      select v_gym.id, v_gym.branch_id, c.id, round(amt * v_gym.scale)::bigint, least(v_month + offs, v_today), note, null
+      select v_gym.id, v_gym.branch_id, c.id, (round(amt * v_gym.scale / 10000.0) * 10000)::bigint, least(v_month + offs, v_today), note, null
       from (values
         ('ভাড়া', 2500000, 2, 'মাসিক ভাড়া'),
         ('বেতন', 2000000, 4, 'স্টাফ বেতন'),
@@ -243,7 +243,7 @@ begin
     end loop;
     -- Small daily expenses over the last two weeks.
     insert into public.expenses (gym_id, branch_id, category_id, amount_paisa, spent_on, note, created_by)
-    select v_gym.id, v_gym.branch_id, c.id, (10000 + floor(random() * 60000))::bigint, v_today - d, 'দৈনিক খরচ', null
+    select v_gym.id, v_gym.branch_id, c.id, (round((10000 + floor(random() * 60000)) / 1000.0) * 1000)::bigint, v_today - d, 'দৈনিক খরচ', null
     from generate_series(0, 13) d
     join public.expense_categories c on c.gym_id = v_gym.id and c.name = 'অন্যান্য'
     where random() < 0.6;

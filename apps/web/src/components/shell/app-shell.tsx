@@ -53,7 +53,7 @@ export async function AppShell(props: ShellProps) {
       </a>
 
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-border bg-surface p-4 desk:flex">
+      <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-border bg-surface p-4 desk:flex print:!hidden">
         <div className="flex items-center gap-3 px-1">
           <GymLogo name={gym.name} logoPath={gym.logoPath} />
           <div className="min-w-0">
@@ -99,7 +99,7 @@ export async function AppShell(props: ShellProps) {
       </aside>
 
       {/* Tablet icon rail */}
-      <aside className="sticky top-0 hidden h-dvh w-[76px] shrink-0 flex-col items-center gap-4 overflow-y-auto border-r border-border bg-surface py-4 md:flex desk:hidden">
+      <aside className="sticky top-0 hidden h-dvh w-[76px] shrink-0 flex-col items-center gap-4 overflow-y-auto border-r border-border bg-surface py-4 md:flex desk:hidden print:!hidden">
         <GymLogo name={gym.name} logoPath={gym.logoPath} />
         <nav aria-label={t("menu")} className="flex-1">
           <RailNav role={role} />
@@ -114,7 +114,7 @@ export async function AppShell(props: ShellProps) {
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile top bar */}
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-surface px-2 md:hidden">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-border bg-surface px-2 md:hidden print:hidden">
           <MoreSheet role={role} gymName={gym.name} theme={theme} variant="menu" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[15px] font-bold">{gym.name}</p>
@@ -147,7 +147,7 @@ export async function AppShell(props: ShellProps) {
         {/* Mobile bottom nav */}
         <nav
           aria-label={t("menu")}
-          className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
+          className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] md:hidden print:hidden"
         >
           <BottomNav
             role={role}

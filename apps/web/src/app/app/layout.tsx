@@ -25,16 +25,29 @@ export default async function GymPanelLayout({ children }: LayoutProps<"/app">) 
 
   const supabase = await createClient();
   const canVerify = membership.role === "owner" || membership.role === "manager";
-  const [memberships, accessState, snapshot] = await Promise.all([
+  const frontDesk = canVerify || membership.role === "reception";
+  const [memberships, accessState, snapshot, lowStock] = await Promise.all([
     getMemberships(),
     getGymAccessState(membership.gymId),
     canVerify
       ? supabase.rpc("gym_money_snapshot", { p_gym_id: membership.gymId })
       : Promise.resolve({ data: null }),
+    frontDesk
+      ? supabase
+          .from("products")
+          .select("id", { count: "exact", head: true })
+          .eq("gym_id", membership.gymId)
+          .is("deleted_at", null)
+          .eq("is_active", true)
+          .eq("is_low_stock", true)
+      : Promise.resolve({ count: 0 }),
   ]);
   const pendingCount = Number(
     (snapshot.data as { pending_count?: number } | null)?.pending_count ?? 0,
   );
+  const badges: Record<string, number> = {};
+  if (pendingCount) badges.payments = pendingCount;
+  if (lowStock.count) badges.sales = lowStock.count;
 
   // Branch shown under the gym name: the only branch, or the staff member's first branch.
   const { data: branches } = await supabase
@@ -64,7 +77,7 @@ export default async function GymPanelLayout({ children }: LayoutProps<"/app">) 
       gyms={memberships.map((m) => ({ id: m.gymId, name: m.gym.name }))}
       userName={profile?.full_name || ""}
       accessState={accessState}
-      badges={pendingCount ? { payments: pendingCount } : {}}
+      badges={badges}
       daysLeft={daysLeft}
       theme={theme}
     >

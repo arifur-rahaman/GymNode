@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { WalletCards } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PaymentMember } from "@/app/app/payments/actions";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import type { IsoDate } from "@gymnode/core";
+import { useIsDesktop } from "@/lib/use-is-desktop";
 import type { PackageOption } from "./payment-fields";
 import { TakePaymentPanel } from "./take-payment-panel";
 
@@ -18,18 +19,6 @@ type Props = {
   siteUrl: string;
   initialMember: PaymentMember | null;
 };
-
-function useIsDesktop() {
-  const [desktop, setDesktop] = useState<boolean | null>(null);
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 75rem)");
-    const update = () => setDesktop(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return desktop;
-}
 
 /** Take-payment panel: a side card on desktop (≥1200px), a full-screen sheet on smaller screens. */
 export function PaymentPanelHost(props: Props) {

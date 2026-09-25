@@ -27,12 +27,15 @@ type Receipt = {
   start_date: string | null;
   end_date: string | null;
   received_by: string;
+  discount_paisa: number | null;
+  items: { name: string; qty: number; unit_price_paisa: number; line_total_paisa: number }[] | null;
 };
 
 /** Public receipt: anyone with the secret link can see it (e.g. sent on WhatsApp). */
 export default async function ReceiptPage({ params }: PageProps<"/r/[token]">) {
   const { token } = await params;
   const t = await getTranslations("receipt");
+  const ti = await getTranslations("receiptItems");
   const tm = await getTranslations("methods");
   const ts = await getTranslations("status");
   const supabase = await createClient();
@@ -63,7 +66,12 @@ export default async function ReceiptPage({ params }: PageProps<"/r/[token]">) {
       >{`${formatDateShort(paidAt)} · ${formatTimeDhaka(paidAt)}`}</span>,
     ],
     [t("member"), `${r.member_name ?? "—"}${r.member_code ? ` · ${r.member_code}` : ""}`],
-    [t("package"), r.kind === "due" ? t("dueKind") : (r.package_name ?? "—")],
+    ...(r.kind === "sale"
+      ? []
+      : ([[t("package"), r.kind === "due" ? t("dueKind") : (r.package_name ?? "—")]] as [
+          string,
+          React.ReactNode,
+        ][])),
     ...(r.start_date && r.end_date
       ? ([
           [
@@ -122,6 +130,30 @@ export default async function ReceiptPage({ params }: PageProps<"/r/[token]">) {
             </div>
           ))}
         </dl>
+        {r.items?.length ? (
+          <section className="mt-2 border-t border-border pt-3">
+            <h2 className="mb-1 text-sm font-semibold">{ti("items")}</h2>
+            <ul className="flex flex-col text-sm">
+              {r.items.map((item) => (
+                <li key={item.name} className="flex justify-between gap-4 py-1.5">
+                  <span>
+                    {item.name}{" "}
+                    <span className="num text-muted">
+                      × {item.qty} ({formatTaka(item.unit_price_paisa)})
+                    </span>
+                  </span>
+                  <span className="num font-medium">{formatTaka(item.line_total_paisa)}</span>
+                </li>
+              ))}
+              {r.discount_paisa ? (
+                <li className="flex justify-between gap-4 py-1.5">
+                  <span className="text-muted">{ti("discount")}</span>
+                  <span className="num font-medium">−{formatTaka(r.discount_paisa)}</span>
+                </li>
+              ) : null}
+            </ul>
+          </section>
+        ) : null}
         <div className="mt-4 flex items-center justify-between rounded-md bg-surface-2 p-4">
           <span className="text-muted">{t("amount")}</span>
           <span

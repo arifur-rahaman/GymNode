@@ -3,6 +3,7 @@ import {
   addDays,
   daysBetween,
   formatDateLong,
+  formatMonth,
   formatDateShort,
   formatTimeDhaka,
   isIsoDate,
@@ -82,5 +83,14 @@ describe("dhakaPeriod", async () => {
   it("percent change", () => {
     expect(percentChange(112, 100)).toBe(12);
     expect(percentChange(50, 0)).toBeNull();
+  });
+});
+
+describe("formatMonth", () => {
+  it("uses Bangla or English month names with English-digit years", () => {
+    expect(formatMonth("2026-09-25", "bn")).toBe("সেপ্টেম্বর 2026");
+    expect(formatMonth("2026-04-01", "bn", { style: "short", withYear: false })).toBe("এপ্রি");
+    expect(formatMonth("2026-12-01", "en")).toBe("December 2026");
+    expect(formatMonth("2026-12-01", "en", { style: "short", withYear: false })).toBe("Dec");
   });
 });

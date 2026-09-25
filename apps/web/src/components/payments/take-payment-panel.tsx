@@ -170,7 +170,7 @@ export function TakePaymentPanel({
   );
 }
 
-function MemberSearch({ onPick }: { onPick: (m: PaymentMember) => void }) {
+export function MemberSearch({ onPick }: { onPick: (m: PaymentMember) => void }) {
   const t = useTranslations("payments");
   const [q, setQ] = useState("");
   const [results, setResults] = useState<PaymentMember[] | null>(null);

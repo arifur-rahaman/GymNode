@@ -1,6 +1,6 @@
 # GymNode — Build Plan (Phase 1: Web)
 
-> Status: **M4 done (25 Sep 2026). Next: M5 (expenses, sales & stock, reports), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
+> Status: **M5 done (25 Sep 2026). Next: M6 (messaging), waiting for the founder's go-ahead.** Q1–Q5 are decided (see §8).
 > Sources: `docs/design/CLAUDE_CODE_PROMPT.md` (the brief), `docs/design/DESIGN_SYSTEM.md`, `docs/design/tokens.css`, `docs/design/designs/*.dc.html`.
 > Written 24 Sep 2026.
 
@@ -358,7 +358,7 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 - [x] Receipt page `/r/[token]`: public secret link, printable (prints light), shareable on WhatsApp right after taking a payment
 - [x] Dues list with WhatsApp reminder (prefilled Bangla message) and "pay due only"; member profile links to receipts and "pay due"
 - [ ] Automatic 24-hour reminder message for unverified payments → with messaging (M6)
-- [ ] PDF report button from the design → reports (M5)
+- [x] PDF report button from the design → reports (M5)
 
 **M3 notes (25 Sep 2026)**
 
@@ -384,9 +384,25 @@ Each milestone ends with: lint + type-check + tests green, this file updated, an
 
 ### M5 — Expenses, sales & stock, reports
 
-- [ ] Expenses + categories (salary owner-only)
-- [ ] Products, stock movements, POS sale, low-stock alert
-- [ ] Reports like `Reports.dc.html` + PDF/Excel export
+- [x] Expenses page (আয়-ব্যয়): month by month, income vs expenses vs net profit, by-category bars, add/edit/delete (deletes are kept for the audit log), categories (add, rename, hide; salary categories owner-only)
+- [x] Supplements shop (বিক্রি ও স্টক): products, stock in (can be recorded as an expense in the same step), stock count correction with reason (audited), stock history
+- [x] POS: tap products → cart → member or walk-in → discount → cash/bKash/Nagad/Rocket/card → receipt (WhatsApp share for members). Stock, sale and payment are saved together by the database; cancelling the payment puts the items back
+- [x] Low-stock alert: badge on the menu, amber notice on the dashboard
+- [x] Reports like `Reports.dc.html`: this month / 3 / 6 months / custom; income, expenses, profit, renewal rate; monthly income-expense-profit chart; expense categories; new vs expired members; popular packages; peak hours; top products; payment methods
+- [x] PDF (print → "Save as PDF") and Excel (.xlsx with 6 sheets) export
+- [x] Receipts list sold items; payments list shows "প্রোটিন শেক ×2 · বিক্রি"
+- [x] 29 new pgTAP tests (149 total), 11 new unit tests, 8 new end-to-end tests
+
+**M5 notes (25 Sep 2026)**
+
+- **PDF uses the browser's print ("Save as PDF").** I chose this because Bangla letters join correctly there. My understanding (not verified in this project) is that server-side PDF libraries often break Bangla letter joining. Charts print in the light palette.
+- **Excel is a real .xlsx file** (library `write-excel-file` 4.1.1, checked on npm 25 Sep 2026). Amounts are numbers in taka, so they can be added up in Excel.
+- **Stock is counted per gym**, not per branch. Per-branch stock can come with multi-branch reporting.
+- **"Expired" in the members chart** = memberships that ran out in that month and were not renewed.
+- **Renewal rate** = of the memberships that ended in the period (up to yesterday), how many were followed by a new one.
+- Managers' expense and report figures leave out salaries (owner-only), and the page says so.
+- Reception can see a product's last purchase cost in the database (the screen hides it). Tell me if that must be locked down too.
+- **Fixed while building:** an expense could in theory be pointed at another gym's branch or category (the database now refuses it). Seed expenses were scaled down to match the sample gym's income.
 
 ### M6 — Messaging
 

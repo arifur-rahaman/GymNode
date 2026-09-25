@@ -36,6 +36,10 @@ const DB_ERRORS: Record<string, string> = {
   not_pending: "notPending",
   already_cancelled: "alreadyCancelled",
   reason_required: "reasonRequired",
+  invalid_quantity: "invalidQuantity",
+  insufficient_stock: "insufficientStock",
+  invalid_product: "invalidProduct",
+  empty_cart: "emptyCart",
 };
 
 /** Maps Supabase Auth / Postgres errors to our translation codes. */
