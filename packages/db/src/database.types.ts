@@ -34,6 +34,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      attendance: {
+        Row: {
+          branch_id: string
+          checked_in_at: string
+          created_by: string | null
+          device_id: string | null
+          gym_id: string
+          id: string
+          member_id: string | null
+          method: Database["public"]["Enums"]["checkin_method"]
+          override_by: string | null
+          reason: string | null
+          result: Database["public"]["Enums"]["checkin_result"]
+        }
+        Insert: {
+          branch_id: string
+          checked_in_at?: string
+          created_by?: string | null
+          device_id?: string | null
+          gym_id: string
+          id?: string
+          member_id?: string | null
+          method: Database["public"]["Enums"]["checkin_method"]
+          override_by?: string | null
+          reason?: string | null
+          result: Database["public"]["Enums"]["checkin_result"]
+        }
+        Update: {
+          branch_id?: string
+          checked_in_at?: string
+          created_by?: string | null
+          device_id?: string | null
+          gym_id?: string
+          id?: string
+          member_id?: string | null
+          method?: Database["public"]["Enums"]["checkin_method"]
+          override_by?: string | null
+          reason?: string | null
+          result?: Database["public"]["Enums"]["checkin_result"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "member_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -164,6 +235,108 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "branches_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_categories: {
+        Row: {
+          created_at: string
+          gym_id: string
+          id: string
+          is_active: boolean
+          is_salary: boolean
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          gym_id: string
+          id?: string
+          is_active?: boolean
+          is_salary?: boolean
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          gym_id?: string
+          id?: string
+          is_active?: boolean
+          is_salary?: boolean
+          name?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_categories_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expenses: {
+        Row: {
+          amount_paisa: number
+          branch_id: string
+          category_id: string
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          gym_id: string
+          id: string
+          note: string
+          spent_on: string
+          updated_at: string
+        }
+        Insert: {
+          amount_paisa: number
+          branch_id: string
+          category_id: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          gym_id: string
+          id?: string
+          note?: string
+          spent_on?: string
+          updated_at?: string
+        }
+        Update: {
+          amount_paisa?: number
+          branch_id?: string
+          category_id?: string
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          gym_id?: string
+          id?: string
+          note?: string
+          spent_on?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "expense_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_gym_id_fkey"
             columns: ["gym_id"]
             isOneToOne: false
             referencedRelation: "gyms"
@@ -1155,6 +1328,10 @@ export type Database = {
         Args: { p_payment_id: string; p_reason: string }
         Returns: undefined
       }
+      check_in_member: {
+        Args: { p_member_id: string; p_override?: boolean }
+        Returns: Json
+      }
       clear_password_change_flag: { Args: never; Returns: undefined }
       create_gym_with_owner: {
         Args: {
@@ -1167,6 +1344,10 @@ export type Database = {
           p_phone: string
         }
         Returns: string
+      }
+      dashboard_summary: {
+        Args: { p_days?: number; p_gym_id: string }
+        Returns: Json
       }
       dhaka_today: { Args: never; Returns: string }
       freeze_membership: {
@@ -1277,6 +1458,8 @@ export type Database = {
     Enums: {
       billing_method: "cash" | "bkash" | "nagad" | "rocket" | "card" | "bank"
       biometric_method: "face" | "fingerprint" | "rfid"
+      checkin_method: "face" | "fingerprint" | "rfid" | "qr" | "manual"
+      checkin_result: "allowed" | "blocked"
       gym_role: "owner" | "manager" | "reception" | "trainer"
       gym_status: "trial" | "active" | "past_due" | "suspended" | "cancelled"
       invoice_status: "unpaid" | "paid" | "void"
@@ -1420,6 +1603,8 @@ export const Constants = {
     Enums: {
       billing_method: ["cash", "bkash", "nagad", "rocket", "card", "bank"],
       biometric_method: ["face", "fingerprint", "rfid"],
+      checkin_method: ["face", "fingerprint", "rfid", "qr", "manual"],
+      checkin_result: ["allowed", "blocked"],
       gym_role: ["owner", "manager", "reception", "trainer"],
       gym_status: ["trial", "active", "past_due", "suspended", "cancelled"],
       invoice_status: ["unpaid", "paid", "void"],
