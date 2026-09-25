@@ -484,6 +484,7 @@ export type Database = {
           settings: Json
           slug: string
           status: Database["public"]["Enums"]["gym_status"]
+          status_changed_at: string
           timezone: string
           trial_ends_at: string | null
           updated_at: string
@@ -503,6 +504,7 @@ export type Database = {
           settings?: Json
           slug: string
           status?: Database["public"]["Enums"]["gym_status"]
+          status_changed_at?: string
           timezone?: string
           trial_ends_at?: string | null
           updated_at?: string
@@ -522,6 +524,7 @@ export type Database = {
           settings?: Json
           slug?: string
           status?: Database["public"]["Enums"]["gym_status"]
+          status_changed_at?: string
           timezone?: string
           trial_ends_at?: string | null
           updated_at?: string
@@ -1412,11 +1415,17 @@ export type Database = {
           id: string
           invoice_no: string
           method: Database["public"]["Enums"]["billing_method"] | null
+          note: string
           paid_at: string | null
+          period_end: string | null
+          period_start: string | null
+          plan_id: string | null
+          recorded_by: string | null
           status: Database["public"]["Enums"]["invoice_status"]
           subscription_id: string | null
           transaction_id: string | null
           updated_at: string
+          void_reason: string | null
         }
         Insert: {
           amount_paisa: number
@@ -1426,11 +1435,17 @@ export type Database = {
           id?: string
           invoice_no: string
           method?: Database["public"]["Enums"]["billing_method"] | null
+          note?: string
           paid_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          plan_id?: string | null
+          recorded_by?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           subscription_id?: string | null
           transaction_id?: string | null
           updated_at?: string
+          void_reason?: string | null
         }
         Update: {
           amount_paisa?: number
@@ -1440,11 +1455,17 @@ export type Database = {
           id?: string
           invoice_no?: string
           method?: Database["public"]["Enums"]["billing_method"] | null
+          note?: string
           paid_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          plan_id?: string | null
+          recorded_by?: string | null
           status?: Database["public"]["Enums"]["invoice_status"]
           subscription_id?: string | null
           transaction_id?: string | null
           updated_at?: string
+          void_reason?: string | null
         }
         Relationships: [
           {
@@ -1452,6 +1473,13 @@ export type Database = {
             columns: ["gym_id"]
             isOneToOne: false
             referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_invoices_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
             referencedColumns: ["id"]
           },
           {
@@ -1494,6 +1522,91 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "support_sessions_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_ticket_messages: {
+        Row: {
+          author_name: string
+          author_user_id: string | null
+          body: string
+          created_at: string
+          from_platform: boolean
+          id: string
+          ticket_id: string
+        }
+        Insert: {
+          author_name?: string
+          author_user_id?: string | null
+          body: string
+          created_at?: string
+          from_platform?: boolean
+          id?: string
+          ticket_id: string
+        }
+        Update: {
+          author_name?: string
+          author_user_id?: string | null
+          body?: string
+          created_at?: string
+          from_platform?: boolean
+          id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_ticket_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          gym_id: string
+          id: string
+          last_message_at: string
+          opened_by: string | null
+          priority: Database["public"]["Enums"]["ticket_priority"]
+          status: Database["public"]["Enums"]["ticket_status"]
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          gym_id: string
+          id?: string
+          last_message_at?: string
+          opened_by?: string | null
+          priority?: Database["public"]["Enums"]["ticket_priority"]
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          gym_id?: string
+          id?: string
+          last_message_at?: string
+          opened_by?: string | null
+          priority?: Database["public"]["Enums"]["ticket_priority"]
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_gym_id_fkey"
             columns: ["gym_id"]
             isOneToOne: false
             referencedRelation: "gyms"
@@ -1591,6 +1704,85 @@ export type Database = {
         Args: { p_new_qty: number; p_product_id: string; p_reason: string }
         Returns: undefined
       }
+      admin_add_team_member: {
+        Args: {
+          p_email: string
+          p_role: Database["public"]["Enums"]["platform_role"]
+        }
+        Returns: undefined
+      }
+      admin_create_invoice: {
+        Args: {
+          p_amount_paisa: number
+          p_due_date: string
+          p_gym_id: string
+          p_note?: string
+          p_period_start?: string
+        }
+        Returns: string
+      }
+      admin_extend_trial: {
+        Args: { p_days: number; p_gym_id: string }
+        Returns: string
+      }
+      admin_generate_invoices: {
+        Args: { p_due_day?: number; p_month: string }
+        Returns: number
+      }
+      admin_gym_detail: { Args: { p_gym_id: string }; Returns: Json }
+      admin_list_gyms: {
+        Args: {
+          p_city?: string
+          p_limit?: number
+          p_offset?: number
+          p_q?: string
+          p_status?: string
+        }
+        Returns: Json
+      }
+      admin_list_invoices: {
+        Args: { p_limit?: number; p_offset?: number; p_status?: string }
+        Returns: Json
+      }
+      admin_list_team: { Args: never; Returns: Json }
+      admin_list_tickets: {
+        Args: { p_limit?: number; p_status?: string }
+        Returns: Json
+      }
+      admin_mark_invoice_paid: {
+        Args: {
+          p_invoice_id: string
+          p_method: Database["public"]["Enums"]["billing_method"]
+          p_paid_on?: string
+          p_transaction_id?: string
+        }
+        Returns: undefined
+      }
+      admin_overview: { Args: never; Returns: Json }
+      admin_remove_team_member: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
+      admin_set_gym_plan: {
+        Args: { p_gym_id: string; p_plan_id: string; p_price_paisa?: number }
+        Returns: undefined
+      }
+      admin_set_gym_status: {
+        Args: {
+          p_gym_id: string
+          p_reason: string
+          p_status: Database["public"]["Enums"]["gym_status"]
+        }
+        Returns: undefined
+      }
+      admin_update_setting: {
+        Args: { p_key: string; p_value: Json }
+        Returns: undefined
+      }
+      admin_void_invoice: {
+        Args: { p_invoice_id: string; p_reason: string }
+        Returns: undefined
+      }
       can_manage_staff_role: {
         Args: {
           p_gym_id: string
@@ -1624,6 +1816,10 @@ export type Database = {
         Returns: Json
       }
       dhaka_today: { Args: never; Returns: string }
+      end_support_session: {
+        Args: { p_session_id: string }
+        Returns: undefined
+      }
       freeze_membership: {
         Args: {
           p_from: string
@@ -1647,6 +1843,7 @@ export type Database = {
         Returns: Database["public"]["Enums"]["gym_status"]
       }
       gym_money_snapshot: { Args: { p_gym_id: string }; Returns: Json }
+      gym_plan_usage: { Args: { p_gym_id: string }; Returns: Json }
       mark_staff_password_reset: {
         Args: { p_gym_user_id: string }
         Returns: undefined
@@ -1657,6 +1854,15 @@ export type Database = {
           status: string
           total: number
         }[]
+      }
+      open_support_ticket: {
+        Args: {
+          p_body: string
+          p_gym_id: string
+          p_priority?: Database["public"]["Enums"]["ticket_priority"]
+          p_subject: string
+        }
+        Returns: string
       }
       pay_due: {
         Args: {
@@ -1716,6 +1922,10 @@ export type Database = {
         }
         Returns: Json
       }
+      reply_support_ticket: {
+        Args: { p_body: string; p_ticket_id: string }
+        Returns: undefined
+      }
       report_summary: {
         Args: {
           p_from: string
@@ -1730,7 +1940,18 @@ export type Database = {
         Args: { p_active: boolean; p_gym_user_id: string }
         Returns: undefined
       }
+      set_ticket_status: {
+        Args: {
+          p_status: Database["public"]["Enums"]["ticket_status"]
+          p_ticket_id: string
+        }
+        Returns: undefined
+      }
       staff_user_for_reset: { Args: { p_gym_user_id: string }; Returns: string }
+      start_support_session: {
+        Args: { p_gym_id: string; p_minutes?: number; p_reason: string }
+        Returns: Json
+      }
       submit_self_registration: {
         Args: {
           p_address?: string
@@ -1767,6 +1988,8 @@ export type Database = {
       platform_role: "super_admin" | "support"
       stock_movement_kind: "purchase" | "sale" | "sale_return" | "adjustment"
       subscription_status: "trialing" | "active" | "past_due" | "cancelled"
+      ticket_priority: "normal" | "urgent"
+      ticket_status: "open" | "answered" | "closed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1913,6 +2136,8 @@ export const Constants = {
       platform_role: ["super_admin", "support"],
       stock_movement_kind: ["purchase", "sale", "sale_return", "adjustment"],
       subscription_status: ["trialing", "active", "past_due", "cancelled"],
+      ticket_priority: ["normal", "urgent"],
+      ticket_status: ["open", "answered", "closed"],
     },
   },
 } as const

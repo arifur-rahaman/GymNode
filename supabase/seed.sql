@@ -5,6 +5,9 @@
 --   Reception:    phone 01722222222       / GymNode-staff-1
 --   Trainer:      phone 01733333333       / GymNode-staff-1
 --   Owner #2:     owner2@gymnode.test     / GymNode-owner-1   (ফিট জোন)
+--   Support team: support@gymnode.test    / GymNode-admin-1   (platform role "support": read-only helper)
+-- Plus 8 small sample gyms (no members) so the super admin screens have a realistic list.
+-- Subscription prices below are SAMPLE numbers for the demo only; real plan prices are still undecided.
 -- Members: ~45 in পাওয়ার হাউস জিম and ~15 in ফিট জোন, with 6 months of memberships and payments.
 
 create function pg_temp.seed_user(p_email text, p_password text, p_name text, p_app_meta jsonb default '{}')
@@ -342,4 +345,126 @@ begin
       end loop;
     end loop;
   end loop;
+end $$;
+
+
+-------------------------------------------------------------------------------
+-- M7: SaaS side — plans on gyms, subscription invoices, more gyms, support tickets
+-------------------------------------------------------------------------------
+do $$
+declare
+  v_support uuid;
+  v_ph uuid := (select id from public.gyms where code_prefix = 'PH');
+  v_fz uuid := (select id from public.gyms where code_prefix = 'FZ');
+  v_plan_ids jsonb := (select jsonb_object_agg(code, id) from public.plans);
+  v_month date := date_trunc('month', public.dhaka_today())::date;
+  v_gym record;
+  v_owner uuid;
+  v_gym_id uuid;
+  v_sub uuid;
+  v_plan uuid;
+  v_ticket uuid;
+begin
+  perform setseed(0.42);
+  v_support := pg_temp.seed_user('support@gymnode.test', 'GymNode-admin-1', 'সাপোর্ট টিম');
+  insert into public.platform_admins (user_id, role) values (v_support, 'support');
+
+  -- পাওয়ার হাউস: Growth, paying for 7 months (sample price ৳3,000). ফিট জোন stays on its free trial.
+  update public.gyms set plan_id = (v_plan_ids ->> 'growth')::uuid, status = 'active',
+    created_at = now() - interval '7 months' where id = v_ph;
+  update public.gym_subscriptions set plan_id = (v_plan_ids ->> 'growth')::uuid, price_paisa = 300000, status = 'active',
+    current_period_start = v_month, current_period_end = v_month + interval '1 month' where gym_id = v_ph;
+
+  -- Eight small sample gyms: name, prefix, city, plan, sample price, status, months old, overdue?, last login days ago
+  for v_gym in
+    select * from (values
+      ('আয়রন প্যারাডাইস', 'IP', 'চট্টগ্রাম', null, null, 'trial', 0, false, 1),
+      ('মাসল ফ্যাক্টরি', 'MF', 'ঢাকা', 'starter', 150000, 'active', 9, true, 3),
+      ('বডি শেপ জিম', 'BS', 'সিলেট', 'starter', 150000, 'active', 5, false, 0),
+      ('গোল্ডেন জিম', 'GG', 'চট্টগ্রাম', 'pro', 600000, 'active', 11, false, 0),
+      ('লেডিস ফিটনেস', 'LF', 'ঢাকা', 'growth', 300000, 'active', 4, false, 0),
+      ('এক্সট্রিম ফিট', 'XF', 'খুলনা', 'starter', 150000, 'suspended', 8, true, 21),
+      ('কোর ফিটনেস', 'CF', 'রাজশাহী', null, null, 'trial', 0, false, 0),
+      ('পাওয়ার লিফট', 'PL', 'ঢাকা', 'starter', 150000, 'cancelled', 6, false, 40)
+    ) as x(name, prefix, city, plan_code, price, status, months, overdue, last_login)
+  loop
+    v_owner := pg_temp.seed_user(lower(v_gym.prefix) || '.owner@gymnode.test', 'GymNode-owner-1', 'মালিক ' || v_gym.prefix);
+    update auth.users set last_sign_in_at = now() - make_interval(days => v_gym.last_login, hours => 2) where id = v_owner;
+    v_plan := (v_plan_ids ->> v_gym.plan_code)::uuid;
+    insert into public.gyms (name, slug, code_prefix, owner_user_id, city, status, trial_ends_at, plan_id,
+      onboarding_completed_at, created_at)
+    values (v_gym.name, lower(v_gym.prefix) || '-' || substr(md5(v_gym.name), 1, 5), v_gym.prefix, v_owner, v_gym.city,
+      v_gym.status::public.gym_status,
+      case when v_gym.status = 'trial' then now() + make_interval(days => 4 + v_gym.last_login * 5)
+           else now() - make_interval(months => v_gym.months) + interval '14 days' end,
+      v_plan, now(), now() - make_interval(months => v_gym.months, days => 3))
+    returning id into v_gym_id;
+    insert into public.branches (gym_id, name) values (v_gym_id, 'মেইন শাখা');
+    insert into public.gym_users (gym_id, user_id, role, display_name) values (v_gym_id, v_owner, 'owner', 'মালিক ' || v_gym.prefix);
+    insert into public.gym_subscriptions (gym_id, plan_id, price_paisa, status, current_period_start, current_period_end)
+    values (v_gym_id, v_plan, v_gym.price,
+      case v_gym.status when 'trial' then 'trialing' when 'active' then 'active' when 'cancelled' then 'cancelled' else 'past_due' end::public.subscription_status,
+      v_month, v_month + interval '1 month')
+    returning id into v_sub;
+    -- Monthly invoices since the trial ended; the current month is unpaid for "overdue" gyms.
+    if v_gym.price is not null then
+      for m in 1 .. greatest(v_gym.months - 1, 0) loop
+        insert into public.subscription_invoices (gym_id, subscription_id, invoice_no, amount_paisa, due_date, status,
+          paid_at, method, transaction_id, plan_id, period_start, period_end)
+        values (v_gym_id, v_sub, app_private.new_invoice_no(), v_gym.price,
+          (v_month - make_interval(months => v_gym.months - 1 - m))::date + 9,
+          case when (v_gym.overdue and m = v_gym.months - 1)
+                 or (v_gym.status = 'suspended' and m >= v_gym.months - 2) then 'unpaid'
+               when v_gym.status = 'cancelled' and m > v_gym.months - 3 then 'void'
+               else 'paid' end::public.invoice_status,
+          case when (v_gym.overdue and m = v_gym.months - 1) or (v_gym.status = 'suspended' and m >= v_gym.months - 2)
+                 or (v_gym.status = 'cancelled' and m > v_gym.months - 3) then null
+               else ((v_month - make_interval(months => v_gym.months - 1 - m))::date + 6)::timestamp at time zone 'Asia/Dhaka' end,
+          case when random() < 0.5 then 'bkash' when random() < 0.5 then 'nagad' else 'bank' end::public.billing_method,
+          upper(substr(md5(random()::text), 1, 10)), v_plan,
+          (v_month - make_interval(months => v_gym.months - 1 - m))::date,
+          (v_month - make_interval(months => v_gym.months - 2 - m))::date - 1);
+      end loop;
+    end if;
+    if v_gym.status = 'cancelled' then
+      update public.gyms set status_changed_at = v_month + interval '3 days' where id = v_gym_id;
+    end if;
+  end loop;
+  -- Unpaid invoices have no payment method.
+  update public.subscription_invoices set method = null, transaction_id = null where status <> 'paid';
+
+  -- PH's 7 months of invoices, all paid.
+  insert into public.subscription_invoices (gym_id, subscription_id, invoice_no, amount_paisa, due_date, status, paid_at,
+    method, transaction_id, plan_id, period_start, period_end)
+  select v_ph, s.id, app_private.new_invoice_no(), 300000, (v_month - make_interval(months => 6 - m))::date + 9, 'paid',
+    ((v_month - make_interval(months => 6 - m))::date + 7)::timestamp at time zone 'Asia/Dhaka', 'bkash',
+    upper(substr(md5(random()::text), 1, 10)), (v_plan_ids ->> 'growth')::uuid,
+    (v_month - make_interval(months => 6 - m))::date, (v_month - make_interval(months => 5 - m))::date - 1
+  from public.gym_subscriptions s, generate_series(0, 6) m
+  where s.gym_id = v_ph;
+
+  -- Support tickets.
+  for v_gym in
+    select * from (values
+      ('MF', 'দরজা খুলছে না, মেশিন অফলাইন', 'সকাল থেকে মেইন গেটের মেশিন কাজ করছে না। মেম্বাররা ঢুকতে পারছে না।', 'urgent', 3),
+      ('GG', 'বিকাশ পেমেন্ট যাচাই হচ্ছে না', 'যাচাই বাটন চাপলে কিছু হচ্ছে না, দয়া করে দেখুন।', 'urgent', 5),
+      ('IP', 'পুরনো Excel ডেটা তুলে দিতে হবে', 'আমাদের ২০০ মেম্বারের একটা Excel ফাইল আছে। এটা কি তুলে দেওয়া যাবে?', 'normal', 26),
+      ('CF', 'নতুন প্যাকেজ কীভাবে বানাব?', 'ঈদ অফারের জন্য ১৫ দিনের প্যাকেজ বানাতে চাই।', 'normal', 30),
+      ('PH', 'রিপোর্টে ভুল তারিখ', 'গত মাসের রিপোর্টে একটা পেমেন্টের তারিখ ভুল দেখাচ্ছে মনে হচ্ছে।', 'normal', 50)
+    ) as x(prefix, subject, body, priority, hours_ago)
+  loop
+    select g.id, g.owner_user_id into v_gym_id, v_owner from public.gyms g where g.code_prefix = v_gym.prefix;
+    insert into public.support_tickets (gym_id, opened_by, subject, priority, last_message_at, created_at)
+    values (v_gym_id, v_owner, v_gym.subject, v_gym.priority::public.ticket_priority,
+      now() - make_interval(hours => v_gym.hours_ago), now() - make_interval(hours => v_gym.hours_ago))
+    returning id into v_ticket;
+    insert into public.support_ticket_messages (ticket_id, author_user_id, author_name, body, created_at)
+    values (v_ticket, v_owner, coalesce((select full_name from public.profiles where user_id = v_owner), ''), v_gym.body,
+      now() - make_interval(hours => v_gym.hours_ago));
+  end loop;
+  -- One answered ticket.
+  select t.id into v_ticket from public.support_tickets t join public.gyms g on g.id = t.gym_id where g.code_prefix = 'CF';
+  insert into public.support_ticket_messages (ticket_id, author_user_id, author_name, from_platform, body, created_at)
+  values (v_ticket, v_support, 'সাপোর্ট টিম', true, 'প্যাকেজ পেজে "+ প্যাকেজ যোগ করুন" চাপুন, মেয়াদ ১৫ দিন দিন। কোনো সমস্যা হলে জানাবেন।', now() - interval '20 hours');
+  update public.support_tickets set status = 'answered', last_message_at = now() - interval '20 hours' where id = v_ticket;
 end $$;
