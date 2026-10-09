@@ -406,18 +406,19 @@ begin
       case v_gym.status when 'trial' then 'trialing' when 'active' then 'active' when 'cancelled' then 'cancelled' else 'past_due' end::public.subscription_status,
       v_month, v_month + interval '1 month')
     returning id into v_sub;
-    -- Monthly invoices since the trial ended; the current month is unpaid for "overdue" gyms.
+    -- Monthly invoices since the trial ended. "Overdue" gyms owe last month and this month,
+    -- so one bill is always past its due date whatever day of the month the seed runs.
     if v_gym.price is not null then
       for m in 1 .. greatest(v_gym.months - 1, 0) loop
         insert into public.subscription_invoices (gym_id, subscription_id, invoice_no, amount_paisa, due_date, status,
           paid_at, method, transaction_id, plan_id, period_start, period_end)
         values (v_gym_id, v_sub, app_private.new_invoice_no(), v_gym.price,
           (v_month - make_interval(months => v_gym.months - 1 - m))::date + 9,
-          case when (v_gym.overdue and m = v_gym.months - 1)
+          case when (v_gym.overdue and m >= v_gym.months - 2)
                  or (v_gym.status = 'suspended' and m >= v_gym.months - 2) then 'unpaid'
                when v_gym.status = 'cancelled' and m > v_gym.months - 3 then 'void'
                else 'paid' end::public.invoice_status,
-          case when (v_gym.overdue and m = v_gym.months - 1) or (v_gym.status = 'suspended' and m >= v_gym.months - 2)
+          case when (v_gym.overdue and m >= v_gym.months - 2) or (v_gym.status = 'suspended' and m >= v_gym.months - 2)
                  or (v_gym.status = 'cancelled' and m > v_gym.months - 3) then null
                else ((v_month - make_interval(months => v_gym.months - 1 - m))::date + 6)::timestamp at time zone 'Asia/Dhaka' end,
           case when random() < 0.5 then 'bkash' when random() < 0.5 then 'nagad' else 'bank' end::public.billing_method,
