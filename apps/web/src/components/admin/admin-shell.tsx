@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { LogOut } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { signOut } from "@/app/(auth)/actions";
+import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -30,12 +31,7 @@ export async function AdminShell({
   const ta = await getTranslations("auth");
   const brand = (
     <div className="flex items-center gap-3 px-1">
-      <span
-        aria-hidden
-        className="flex size-10 shrink-0 items-center justify-center rounded-md bg-accent text-lg font-bold text-on-accent"
-      >
-        G
-      </span>
+      <BrandMark size={40} />
       <div className="min-w-0">
         <p className="truncate font-bold">{t("brand")}</p>
         <p className="text-[11px] font-semibold tracking-wider text-muted">SUPER ADMIN</p>
