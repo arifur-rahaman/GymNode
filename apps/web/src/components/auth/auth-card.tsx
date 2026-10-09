@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
+import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { THEME_COOKIE, parseTheme } from "@/lib/preferences";
@@ -23,12 +24,7 @@ export async function AuthCard({
     <div className="flex min-h-dvh flex-col">
       <header className="flex items-center justify-between gap-3 px-4 py-4 md:px-8">
         <div className="flex items-center gap-2.5">
-          <span
-            aria-hidden
-            className="flex size-9 items-center justify-center rounded-sm bg-accent font-bold text-on-accent"
-          >
-            G
-          </span>
+          <BrandMark size={36} />
           <span className="text-lg font-bold">{t("name")}</span>
         </div>
         <div className="flex items-center gap-2">
